@@ -1,14 +1,18 @@
-import type { ObjGraphData } from "../objects/importedGraph";
 import { Vertex } from "../classes/Vertex";
 import { Graph } from "../classes/Graph";
 import { Edge } from "../classes/Edge";
 
+import GRAPHDATA from "../../data/games.json";
+import type { ObjGraphData } from "../objects/importedGraph";
+
 /**
  * Takes graph data in my custom format and instances the objects for the graph
  * @param graphData
- */
-export function generate_graph_from_json(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, graphData: ObjGraphData) {
+*/
+export function generate_graph_from_json(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
+    const graphData: ObjGraphData = GRAPHDATA;
     let graph = new Graph(ctx, canvas);
+    
     // Creates Vertex instances
     for (const [nodeName, nodeData] of Object.entries(graphData.nodes)) {
         // Some Vertex's are not games so they will not have a release date

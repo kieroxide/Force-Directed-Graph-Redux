@@ -1,6 +1,6 @@
 import { Vec } from "./Vec";
 import { Edge } from "./Edge";
-import { randomNum } from "../main/utils";
+import { randomNum } from "../utility/utils";
 
 const DAMPING = 0.85;
 

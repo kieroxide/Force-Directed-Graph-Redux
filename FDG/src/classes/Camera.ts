@@ -9,7 +9,6 @@ export class Camera {
     }
 
     applyTransform(ctx: CanvasRenderingContext2D) {
-        ctx.save();
         ctx.translate(this.pos.x, this.pos.y);
         ctx.scale(this.zoom, this.zoom);
     }

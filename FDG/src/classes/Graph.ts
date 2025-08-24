@@ -1,6 +1,5 @@
 import { Vertex } from "./Vertex";
 import { Edge } from "./Edge";
-import { BACKGROUND_COLOUR } from "../main/main";
 
 export class Graph {
     ctx: CanvasRenderingContext2D;
@@ -19,18 +18,12 @@ export class Graph {
     }
 
     simulate() {
-        /** Main Draw Loop:
-         *      -Clears Background, Simulates FDG physics, Draws Vertices and Edges
-         *  RAF function calls the method again at the speed of monitor refresh rate
-         */
-        this.ctx.fillStyle = BACKGROUND_COLOUR;
-        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        /** Main physics Loop: Simulates FDG physics */
         this.update();
-        this.draw();
-        requestAnimationFrame(this.simulate.bind(this));
     }
 
     update() {
+        // Updates position using movement Vectors 
         for (const vertex of Object.values(this.vertices)) {
             vertex.update();
         }

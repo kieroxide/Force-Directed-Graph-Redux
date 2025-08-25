@@ -41,7 +41,7 @@ export function springAttraction(
         const forceX = strength * normX;
         const forceY = strength * normY;
 
-        // Pull them slightly toward each other
+        // Pull two vertex's together
         vertexA.vector.x += forceX;
         vertexA.vector.y += forceY;
         vertexB.vector.x -= forceX;

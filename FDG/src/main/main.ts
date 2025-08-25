@@ -9,7 +9,7 @@ window.onload = () => {
 
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
-    
+
     let graph = generate_graph_from_json(ctx, canvas);
     let camera = new Camera();
     setupCameraControls(canvas, camera);

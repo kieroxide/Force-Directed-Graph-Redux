@@ -17,7 +17,7 @@ export class Edge {
     draw(ctx: CanvasRenderingContext2D) {
         const { source, target } = this;
 
-        ctx.strokeStyle = "#000000ff";
+        ctx.strokeStyle = "#18143fff";
         ctx.lineWidth = 2;
         ctx.beginPath();
         ctx.moveTo(source.pos.x, source.pos.y);

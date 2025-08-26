@@ -1,7 +1,7 @@
 import { Vec } from "./Vec";
 import { Edge } from "./Edge";
-import { randomNum } from "../utility/utils";
 import { PHYSICS, RENDERING } from "../constants";
+import { clamp } from "../utility/utils";
 
 export class Vertex {
     // Euclidean Data
@@ -16,10 +16,11 @@ export class Vertex {
 
     // Visual Label
     label: string;
+    labelColour?: string;
     private _textWidth?: number;
 
     constructor(name: string, type: string, releaseDate: string | undefined) {
-        this.pos = new Vec(randomNum(50, 150), randomNum(50, 150));
+        this.pos = new Vec(200, 200);
         this.vector = new Vec(0, 0);
 
         this.name = name;
@@ -29,10 +30,28 @@ export class Vertex {
         if (this.releaseDate === undefined) {
             this.releaseDate = "";
         }
-
+        
         this.edges = [];
-
+        
         this.label = this.name;
+        this.labelColour = undefined;
+    }
+    // Method to update position of the Vertex using the vector's values. Also applies damping
+    update() {
+        this.pos.x += clamp(this.vector.x, PHYSICS.CLAMPS.MAX_SPEED);
+        this.pos.y += clamp(this.vector.y, PHYSICS.CLAMPS.MAX_SPEED);
+
+        this.vector.x *= PHYSICS.FORCES.DAMPING;
+        this.vector.y *= PHYSICS.FORCES.DAMPING;
+    }
+    
+    getNeighbours(): Set<Vertex> {
+        let neighbours = new Set<Vertex>();
+        for (const edge of this.edges) {
+            neighbours.add(edge.target);
+            neighbours.add(edge.source);
+        }
+        return neighbours;
     }
 
     getTextWidth(ctx: CanvasRenderingContext2D, force: boolean = false) {
@@ -45,15 +64,7 @@ export class Vertex {
         return this._textWidth;
     }
 
-    // Method to update position of the Vertex using the vector's values. Also applies damping
-    update() {
-        this.pos.x += this.vector.x;
-        this.pos.y += this.vector.y;
-
-        this.vector.x *= PHYSICS.FORCES.DAMPING;
-        this.vector.y *= PHYSICS.FORCES.DAMPING;
-    }
-
+    
     draw(ctx: CanvasRenderingContext2D) {
         // Set text properties BEFORE measuring (important!)
         ctx.textAlign = "center";
@@ -65,9 +76,8 @@ export class Vertex {
         const boxWidth = metrics.width + padding * 2;
         const boxHeight = RENDERING.FONT.SIZE + padding * 2;
 
-
         // Draw background box
-        ctx.fillStyle = RENDERING.TEXT_BOX.BACKGROUND_COLOR;
+        ctx.fillStyle = this.labelColour || "grey";
         ctx.fillRect(
             this.pos.x - boxWidth / 2,
             this.pos.y - boxHeight / 2,
@@ -76,7 +86,7 @@ export class Vertex {
         );
 
         // Outline of Box
-        ctx.fillStyle = RENDERING.TEXT_BOX.BORDER_COLOR;
+        ctx.strokeStyle = RENDERING.TEXT_BOX.BORDER_COLOR;
         ctx.lineWidth = RENDERING.TEXT_BOX.BORDER_WIDTH;
         ctx.strokeRect(
             this.pos.x - boxWidth / 2,

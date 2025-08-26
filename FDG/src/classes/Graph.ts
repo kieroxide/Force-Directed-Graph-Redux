@@ -1,6 +1,6 @@
 import { Vertex } from "./Vertex";
 import { Edge } from "./Edge";
-import { linearRepulsion } from "../forces/Repulsion";
+import { repulsion } from "../forces/Repulsion";
 import { springAttraction } from "../forces/Attraction";
 import { bfsComponents, circlePoints, randomNiceColor } from "../utility/utils";
 import { RENDERING } from "../constants";
@@ -19,7 +19,7 @@ export class Graph {
     }
     simulate() {
         /** Main physics Loop: Simulates FDG physics */
-        linearRepulsion(this.ctx, this.getVertices());
+        repulsion(this.ctx, this.getVertices());
         springAttraction(this.ctx, this.edges);
         this.update();
     }

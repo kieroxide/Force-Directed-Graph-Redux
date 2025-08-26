@@ -74,7 +74,7 @@ export class Vertex {
 
     draw(ctx: CanvasRenderingContext2D) {
         // Set text properties BEFORE measuring (important!)
-        const massFontSize = RENDERING.FONT.SIZE + (this.getMass() * 3)
+        const massFontSize = RENDERING.FONT.SIZE + (this.getMass() * RENDERING.FONT.MASS_WEIGHT)
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.font = RENDERING.FONT.FULL;

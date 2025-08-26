@@ -2,6 +2,7 @@ export const RENDERING = {
     FONT: {
         SIZE: 12,
         FAMILY: "Arial",
+        MASS_WEIGHT: 2,
         get FULL() {
             return `bold ${this.SIZE}px ${this.FAMILY}`;
         },
@@ -35,8 +36,9 @@ export const RENDERING = {
 export const PHYSICS = {
     FORCES: {
         coloumbs_law_const: 10,
-        spring_const: 0.0075,
-        REST_LENGTH: 150,
+        spring_const: 0.025,
+        REST_LENGTH: 200,
+        BOX_BUFFER: 10,
         DAMPING: 0.98,
     },
     CLAMPS: {

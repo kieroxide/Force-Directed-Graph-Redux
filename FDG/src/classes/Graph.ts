@@ -1,6 +1,6 @@
 import { Vertex } from "./Vertex";
 import { Edge } from "./Edge";
-import { coloumbs_law } from "../forces/Repulsion";
+import { linearRepulsion } from "../forces/Repulsion";
 import { springAttraction } from "../forces/Attraction";
 import { bfsComponents, circlePoints, randomNiceColor } from "../utility/utils";
 import { RENDERING } from "../constants";
@@ -19,7 +19,7 @@ export class Graph {
     }
     simulate() {
         /** Main physics Loop: Simulates FDG physics */
-        coloumbs_law(this.ctx, this.getVertices());
+        linearRepulsion(this.ctx, this.getVertices());
         springAttraction(this.edges);
         this.update();
     }
@@ -58,7 +58,7 @@ export class Graph {
     initVertexColour() {
         /** Assigns unique random colours to each vertex type */
         let colours = new Map<string, string>(); // type->colour
-        
+
         // Iterates and assigns each vertex type a unique colour
         for (const vertex of this.getVertices()) {
             if (colours.has(vertex.type)) {

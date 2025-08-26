@@ -1,6 +1,6 @@
 export const RENDERING = {
     FONT: {
-        SIZE: 12,
+        SIZE: 16,
         FAMILY: "Arial",
         get FULL() {
             return `${this.SIZE}px ${this.FAMILY}`;
@@ -8,22 +8,37 @@ export const RENDERING = {
     },
 
     TEXT_BOX: {
-        PADDING: 6,
-        BACKGROUND_COLOR: "#ffffff",
-        BORDER_COLOR: "#276100ff",
-        BORDER_WIDTH: 1,
+        PADDING: 10,
+        BORDER_COLOR: "#000000ff",
+        BORDER_WIDTH: 3,
     },
 
     CANVAS: {
-        BACKGROUND_COLOR: "#feffdaff",
+        BACKGROUND_COLOR: "#292929ff",
+    },
+
+    COLOURS: {
+        HUE_MIN: 0,
+        HUE_MAX: 359,
+        SATURATION_MIN: 10,
+        SATURATION_MAX: 30,
+        LIGHTNESS_MIN: 50,
+        LIGHTNESS_MAX: 50,
+    },
+
+    INIT_SETTINGS: {
+        INITIAL_RADIUS: 100,
     },
 } as const;
 
 export const PHYSICS = {
     FORCES: {
-        coloumbs_law_const: 500,
-        spring_const: 1,
-        REST_LENGTH: 0,
-        DAMPING: 0.85,
+        coloumbs_law_const: 10,
+        spring_const: 0.005,
+        REST_LENGTH: 150,
+        DAMPING: 0.98,
+    },
+    CLAMPS: {
+        MAX_SPEED: 10,
     },
 } as const;

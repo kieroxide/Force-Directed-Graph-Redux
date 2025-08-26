@@ -39,9 +39,8 @@ export function springAttraction(
         const normX = dx / distance;
         const normY = dy / distance;
 
-        const avg_width = (vertexA.getBoxWidth(ctx) + vertexB.getBoxWidth(ctx))/2
-
-        const displacement = distance - (PHYSICS.FORCES.REST_LENGTH + avg_width);
+        const width_offset = (vertexA.getBoxWidth(ctx)/2) + (vertexB.getBoxWidth(ctx)/2)
+        const displacement = distance - (PHYSICS.FORCES.REST_LENGTH + width_offset);
         const force = strength * displacement;
 
         // Pull two vertex's together

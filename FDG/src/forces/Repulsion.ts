@@ -7,10 +7,11 @@ let totalForce = 0;
 let maxForce = 0;
 let iterations = 0;
 
-export function linearRepulsion(
+export function repulsion(
     ctx: CanvasRenderingContext2D,
     vertices: Array<Vertex>,
-    strength: number = PHYSICS.FORCES.coloumbs_law_const
+    strength: number = PHYSICS.FORCES.coloumbs_law_const,
+    exponent: number = 1
 ) {
     for (let i = 0; i < vertices.length; i++) {
         for (let j = i + 1; j < vertices.length; j++) {
@@ -25,14 +26,11 @@ export function linearRepulsion(
 
             if (centerDistance === 0) continue; // Avoid division by zero
 
-            const edgeDistance = Math.max(
-                centerDistance -
-                    vertexA.getBoxWidth(ctx) / 2 -
-                    vertexB.getBoxWidth(ctx) / 2,
-                2
-            );
+            const width_offset =
+                vertexA.getBoxWidth(ctx) / 2 + vertexB.getBoxWidth(ctx) / 2;
 
-            const force = strength / edgeDistance;
+            const edgeDistance = Math.max(centerDistance - width_offset, 2);
+            const force = strength / edgeDistance ** exponent;
 
             totalForce += force;
             averageForce = totalForce / iterations;
@@ -47,10 +45,10 @@ export function linearRepulsion(
             const unitY = dy / centerDistance;
 
             // Apply equal and opposite forces
-            vertexA.vector.x -= unitX * (force/vertexA.getMass());
-            vertexA.vector.y -= unitY * (force/vertexA.getMass());
-            vertexB.vector.x += unitX * (force/vertexB.getMass());
-            vertexB.vector.y += unitY * (force/vertexB.getMass());
+            vertexA.vector.x -= unitX * (force / vertexA.getMass());
+            vertexA.vector.y -= unitY * (force / vertexA.getMass());
+            vertexB.vector.x += unitX * (force / vertexB.getMass());
+            vertexB.vector.y += unitY * (force / vertexB.getMass());
         }
     }
 }

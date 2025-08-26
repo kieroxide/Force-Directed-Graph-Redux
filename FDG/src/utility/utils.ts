@@ -2,6 +2,11 @@ import { Vec } from "../classes/Vec";
 import { Vertex } from "../classes/Vertex";
 import { RENDERING } from "../constants";
 
+export function resizeCanvas(canvas: HTMLCanvasElement) {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+
 export function randomNiceColor() {
     const hue = Math.floor(Math.random() * RENDERING.COLOURS.HUE_MAX) + RENDERING.COLOURS.HUE_MIN;
     const saturation = Math.floor(Math.random() * RENDERING.COLOURS.SATURATION_MAX) + RENDERING.COLOURS.SATURATION_MIN; 

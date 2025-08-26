@@ -1,7 +1,7 @@
 import { Vec } from "./Vec";
 import { Edge } from "./Edge";
 import { PHYSICS, RENDERING } from "../constants";
-import { clamp } from "../utility/utils";
+import { clamp, setFontSize } from "../utility/utils";
 
 export class Vertex {
     // Euclidean Data
@@ -30,9 +30,9 @@ export class Vertex {
         if (this.releaseDate === undefined) {
             this.releaseDate = "";
         }
-        
+
         this.edges = [];
-        
+
         this.label = this.name;
         this.labelColour = undefined;
     }
@@ -44,7 +44,7 @@ export class Vertex {
         this.vector.x *= PHYSICS.FORCES.DAMPING;
         this.vector.y *= PHYSICS.FORCES.DAMPING;
     }
-    
+
     getNeighbours(): Set<Vertex> {
         let neighbours = new Set<Vertex>();
         for (const edge of this.edges) {
@@ -52,6 +52,11 @@ export class Vertex {
             neighbours.add(edge.source);
         }
         return neighbours;
+    }
+
+    getMass() {
+        // Made into function incase I add more factors for mass
+        return this.edges.length;
     }
 
     getTextWidth(ctx: CanvasRenderingContext2D, force: boolean = false) {
@@ -64,17 +69,20 @@ export class Vertex {
         return this._textWidth;
     }
 
-    
     draw(ctx: CanvasRenderingContext2D) {
         // Set text properties BEFORE measuring (important!)
+        const massFontSize = RENDERING.FONT.SIZE + (this.getMass() * 3)
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.font = RENDERING.FONT.FULL;
-
+        ctx.font = setFontSize(
+            RENDERING.FONT.FULL,
+            massFontSize
+        );
         const metrics = ctx.measureText(this.label);
         const padding = RENDERING.TEXT_BOX.PADDING;
         const boxWidth = metrics.width + padding * 2;
-        const boxHeight = RENDERING.FONT.SIZE + padding * 2;
+        const boxHeight = massFontSize + padding * 2;
 
         // Draw background box
         ctx.fillStyle = this.labelColour || "grey";

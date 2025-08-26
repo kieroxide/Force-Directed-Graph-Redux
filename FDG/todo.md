@@ -4,3 +4,5 @@
 - BFS method to initialise vertex pos.
 - Add colour for types 
 - Add hover over infomation
+- Look into stress majorisation as a finishing move
+- Switch between quadratic and linear repulsion depending on node type

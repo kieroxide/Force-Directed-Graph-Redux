@@ -2,6 +2,11 @@ import { Vec } from "../classes/Vec";
 import { Vertex } from "../classes/Vertex";
 import { RENDERING } from "../constants";
 
+export function setFontSize(fontStr: string, newSizePx: number): string {
+    // Regex matches the first number + 'px'
+    return fontStr.replace(/(\d+)px/, `${newSizePx}px`);
+}
+
 export function resizeCanvas(canvas: HTMLCanvasElement) {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;

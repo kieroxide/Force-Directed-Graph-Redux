@@ -1,9 +1,9 @@
 export const RENDERING = {
     FONT: {
-        SIZE: 16,
+        SIZE: 12,
         FAMILY: "Arial",
         get FULL() {
-            return `${this.SIZE}px ${this.FAMILY}`;
+            return `bold ${this.SIZE}px ${this.FAMILY}`;
         },
     },
 

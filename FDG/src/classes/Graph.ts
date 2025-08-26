@@ -20,7 +20,7 @@ export class Graph {
     simulate() {
         /** Main physics Loop: Simulates FDG physics */
         linearRepulsion(this.ctx, this.getVertices());
-        springAttraction(this.edges);
+        springAttraction(this.ctx, this.edges);
         this.update();
     }
 

@@ -8,6 +8,7 @@ let maxForce = 0;
 let iterations = 0;
 
 export function springAttraction(
+    ctx: CanvasRenderingContext2D,
     edges: Array<Edge>,
     strength: number = PHYSICS.FORCES.spring_const
 ) {
@@ -38,7 +39,9 @@ export function springAttraction(
         const normX = dx / distance;
         const normY = dy / distance;
 
-        const displacement = distance - PHYSICS.FORCES.REST_LENGTH;
+        const avg_width = (vertexA.getBoxWidth(ctx) + vertexB.getBoxWidth(ctx))/2
+
+        const displacement = distance - (PHYSICS.FORCES.REST_LENGTH + avg_width);
         const force = strength * displacement;
 
         // Pull two vertex's together

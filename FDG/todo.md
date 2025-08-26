@@ -1,6 +1,6 @@
 # TODO 
 
-- Greater connections, greater mass 
+- Greater connections, greater mass **tick**
 - BFS method to initialise vertex pos. **tick**
 - Add colour for types **tick**
 - Add hover over infomation

@@ -8,7 +8,8 @@ export const RENDERING = {
     },
 
     TEXT_BOX: {
-        PADDING: 10,
+        PADDING_WIDTH: 50,
+        PADDING_HEIGHT: 70,
         BORDER_COLOR: "#000000ff",
         BORDER_WIDTH: 3,
     },
@@ -34,7 +35,7 @@ export const RENDERING = {
 export const PHYSICS = {
     FORCES: {
         coloumbs_law_const: 10,
-        spring_const: 0.005,
+        spring_const: 0.0075,
         REST_LENGTH: 150,
         DAMPING: 0.98,
     },

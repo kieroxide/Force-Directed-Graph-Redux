@@ -27,12 +27,12 @@ export function linearRepulsion(
 
             const edgeDistance = Math.max(
                 centerDistance -
-                    vertexA.getTextWidth(ctx) / 2 -
-                    vertexB.getTextWidth(ctx) / 2,
+                    vertexA.getBoxWidth(ctx) / 2 -
+                    vertexB.getBoxWidth(ctx) / 2,
                 2
             );
 
-            const force = strength / edgeDistance; //* edgeDistance);
+            const force = strength / edgeDistance;
 
             totalForce += force;
             averageForce = totalForce / iterations;

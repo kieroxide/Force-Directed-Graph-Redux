@@ -58,7 +58,10 @@ export class Vertex {
         // Made into function incase I add more factors for mass
         return this.edges.length;
     }
-
+    getBoxWidth(ctx: CanvasRenderingContext2D, force: boolean = false){
+        let width = this.getTextWidth(ctx, force) + RENDERING.TEXT_BOX.PADDING_WIDTH;
+        return width;
+    }
     getTextWidth(ctx: CanvasRenderingContext2D, force: boolean = false) {
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
@@ -80,9 +83,8 @@ export class Vertex {
             massFontSize
         );
         const metrics = ctx.measureText(this.label);
-        const padding = RENDERING.TEXT_BOX.PADDING;
-        const boxWidth = metrics.width + padding * 2;
-        const boxHeight = massFontSize + padding * 2;
+        const boxWidth = metrics.width + (RENDERING.TEXT_BOX.PADDING_WIDTH/2);
+        const boxHeight = massFontSize + (RENDERING.TEXT_BOX.PADDING_HEIGHT/2);
 
         // Draw background box
         ctx.fillStyle = this.labelColour || "grey";

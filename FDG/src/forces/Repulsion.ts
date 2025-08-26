@@ -7,7 +7,7 @@ let totalForce = 0;
 let maxForce = 0;
 let iterations = 0;
 
-export function coloumbs_law(
+export function linearRepulsion(
     ctx: CanvasRenderingContext2D,
     vertices: Array<Vertex>,
     strength: number = PHYSICS.FORCES.coloumbs_law_const
@@ -25,17 +25,14 @@ export function coloumbs_law(
 
             if (centerDistance === 0) continue; // Avoid division by zero
 
-            const edgeDistance =
+            const edgeDistance = Math.max(
                 centerDistance -
-                vertexA.getTextWidth(ctx) / 2 -
-                vertexB.getTextWidth(ctx) / 2;
+                    vertexA.getTextWidth(ctx) / 2 -
+                    vertexB.getTextWidth(ctx) / 2,
+                2
+            );
 
-            // Avoid division by zero
-            if (edgeDistance <= 1) {
-                continue;
-            }
-            // coloumbs law equation
-            const force = strength / (edgeDistance * edgeDistance);
+            const force = strength / edgeDistance; //* edgeDistance);
 
             totalForce += force;
             averageForce = totalForce / iterations;

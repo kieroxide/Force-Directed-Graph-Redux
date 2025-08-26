@@ -42,9 +42,9 @@ export function springAttraction(
         const force = strength * displacement;
 
         // Pull two vertex's together
-        vertexA.vector.x += force * normX;
-        vertexA.vector.y += force * normY;
-        vertexB.vector.x -= force * normX;
-        vertexB.vector.y -= force * normY;
+        vertexA.vector.x += (force/vertexA.getMass()) * normX;
+        vertexA.vector.y += (force/vertexA.getMass()) * normY;
+        vertexB.vector.x -= (force/vertexB.getMass()) * normX;
+        vertexB.vector.y -= (force/vertexB.getMass()) * normY;
     }
 }

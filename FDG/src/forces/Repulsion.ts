@@ -47,10 +47,10 @@ export function linearRepulsion(
             const unitY = dy / centerDistance;
 
             // Apply equal and opposite forces
-            vertexA.vector.x -= unitX * force;
-            vertexA.vector.y -= unitY * force;
-            vertexB.vector.x += unitX * force;
-            vertexB.vector.y += unitY * force;
+            vertexA.vector.x -= unitX * (force/vertexA.getMass());
+            vertexA.vector.y -= unitY * (force/vertexA.getMass());
+            vertexB.vector.x += unitX * (force/vertexB.getMass());
+            vertexB.vector.y += unitY * (force/vertexB.getMass());
         }
     }
 }

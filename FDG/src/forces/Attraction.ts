@@ -33,18 +33,18 @@ export function springAttraction(
         console.log("Average Force: ", averageForce);
         console.log("Max Force: ", maxForce);
         console.log("\n");
-        
+
         // These are normalised directional vector components
         const normX = dx / distance;
         const normY = dy / distance;
 
-        const forceX = strength * normX;
-        const forceY = strength * normY;
+        const displacement = distance - PHYSICS.FORCES.REST_LENGTH;
+        const force = strength * displacement;
 
         // Pull two vertex's together
-        vertexA.vector.x += forceX;
-        vertexA.vector.y += forceY;
-        vertexB.vector.x -= forceX;
-        vertexB.vector.y -= forceY;
+        vertexA.vector.x += force * normX;
+        vertexA.vector.y += force * normY;
+        vertexB.vector.x -= force * normX;
+        vertexB.vector.y -= force * normY;
     }
 }

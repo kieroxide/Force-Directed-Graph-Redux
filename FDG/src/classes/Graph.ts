@@ -5,22 +5,19 @@ import { centerAttraction, springAttraction } from "../forces/Attraction";
 import { bfsComponents, circlePoints, randomNiceColor } from "../utility/utils";
 import { RENDERING } from "../constants";
 import { Vec } from "./Vec";
-import { Camera } from "./Camera";
 
 export class Graph {
     ctx: CanvasRenderingContext2D;
     canvas: HTMLCanvasElement;
-    camera: Camera;
 
     vertices: Record<string, Vertex>;
     edges: Array<Edge>;
     component_origins: Set<Vertex>;
     selectedVertex?: Vertex;
 
-    constructor(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, camera: Camera) {
+    constructor(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
         this.ctx = ctx;
         this.canvas = canvas;
-        this.camera = camera;
         this.vertices = {};
         this.edges = [];
         this.component_origins = new Set();

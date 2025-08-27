@@ -57,6 +57,7 @@ export function circlePoints(
     return points;
 }
 
+/** Returns Map<componentID, <bfsLevel, Vertices>> */
 export function bfsComponents(
     vertices: Vertex[]
 ): Map<number, Map<number, Vertex[]>> {

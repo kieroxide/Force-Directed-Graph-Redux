@@ -1,19 +1,12 @@
 import type { Edge } from "../classes/Edge";
 import { PHYSICS } from "../constants";
 
-// To debug the average forces a type of force exbits
-let averageForce = 0;
-let totalForce = 0;
-let maxForce = 0;
-let iterations = 0;
-
 export function springAttraction(
     ctx: CanvasRenderingContext2D,
     edges: Array<Edge>,
     strength: number = PHYSICS.FORCES.spring_const
 ) {
     for (const edge of edges) {
-        iterations++;
         const vertexA = edge.source;
         const vertexB = edge.target;
 
@@ -27,14 +20,6 @@ export function springAttraction(
             continue;
         }
 
-        totalForce += strength;
-        averageForce = totalForce / iterations;
-        maxForce = Math.max(strength, maxForce);
-        console.log("SPRING");
-        console.log("Average Force: ", averageForce);
-        console.log("Max Force: ", maxForce);
-        console.log("\n");
-
         // These are normalised directional vector components
         const normX = dx / distance;
         const normY = dy / distance;
@@ -44,9 +29,9 @@ export function springAttraction(
         const force = strength * displacement;
 
         // Pull two vertex's together
-        vertexA.vector.x += (force/vertexA.getMass()) * normX;
-        vertexA.vector.y += (force/vertexA.getMass()) * normY;
-        vertexB.vector.x -= (force/vertexB.getMass()) * normX;
-        vertexB.vector.y -= (force/vertexB.getMass()) * normY;
+        vertexA.vector.x += (force/vertexA.mass) * normX;
+        vertexA.vector.y += (force/vertexA.mass) * normY;
+        vertexB.vector.x -= (force/vertexB.mass) * normX;
+        vertexB.vector.y -= (force/vertexB.mass) * normY;
     }
 }

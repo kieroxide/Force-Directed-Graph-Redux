@@ -1,12 +1,6 @@
 import type { Vertex } from "../classes/Vertex";
 import { PHYSICS } from "../constants";
 
-// To debug the average forces a type of force exbits
-let averageForce = 0;
-let totalForce = 0;
-let maxForce = 0;
-let iterations = 0;
-
 export function repulsion(
     ctx: CanvasRenderingContext2D,
     vertices: Array<Vertex>,
@@ -15,7 +9,6 @@ export function repulsion(
 ) {
     for (let i = 0; i < vertices.length; i++) {
         for (let j = i + 1; j < vertices.length; j++) {
-            iterations++;
             const vertexA = vertices[i];
             const vertexB = vertices[j];
 
@@ -32,23 +25,15 @@ export function repulsion(
             const edgeDistance = Math.max(centerDistance - width_offset, 2);
             const force = strength / edgeDistance ** exponent;
 
-            totalForce += force;
-            averageForce = totalForce / iterations;
-            maxForce = Math.max(force, maxForce);
-            console.log("Repulsion");
-            console.log("Average Force: ", averageForce);
-            console.log("Max Force: ", maxForce);
-            console.log("\n");
-
             // Unit vector (direction)
             const unitX = dx / centerDistance;
             const unitY = dy / centerDistance;
 
             // Apply equal and opposite forces
-            vertexA.vector.x -= unitX * (force / vertexA.getMass());
-            vertexA.vector.y -= unitY * (force / vertexA.getMass());
-            vertexB.vector.x += unitX * (force / vertexB.getMass());
-            vertexB.vector.y += unitY * (force / vertexB.getMass());
+            vertexA.vector.x -= unitX * (force / vertexA.mass);
+            vertexA.vector.y -= unitY * (force / vertexA.mass);
+            vertexB.vector.x += unitX * (force / vertexB.mass);
+            vertexB.vector.y += unitY * (force / vertexB.mass);
         }
     }
 }

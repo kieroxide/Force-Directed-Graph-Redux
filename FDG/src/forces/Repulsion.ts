@@ -4,7 +4,7 @@ import { PHYSICS } from "../constants";
 export function repulsion(
     ctx: CanvasRenderingContext2D,
     vertices: Array<Vertex>,
-    strength: number = PHYSICS.FORCES.coloumbs_law_const,
+    strength: number = PHYSICS.FORCES.COLOUMBS_LAW,
     exponent: number = 1
 ) {
     for (let i = 0; i < vertices.length; i++) {

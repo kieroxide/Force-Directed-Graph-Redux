@@ -1,3 +1,8 @@
+export const Controls = {
+    MouseSpeedFactor: 1,
+    ZoomScaleFactor: 1.1,
+}
+
 export const RENDERING = {
     FONT: {
         SIZE: 12,
@@ -35,13 +40,13 @@ export const RENDERING = {
 
 export const PHYSICS = {
     FORCES: {
-        coloumbs_law_const: 10,
+        coloumbs_law_const: 1000,
         spring_const: 0.025,
-        REST_LENGTH: 200,
+        REST_LENGTH: 100,
         BOX_BUFFER: 10,
         DAMPING: 0.98,
     },
     CLAMPS: {
-        MAX_SPEED: 10,
+        MAX_SPEED: 20,
     },
 } as const;

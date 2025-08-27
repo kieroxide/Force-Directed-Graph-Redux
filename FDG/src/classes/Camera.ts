@@ -1,3 +1,4 @@
+import { Controls } from "../constants";
 import { Vec } from "./Vec";
 
 export class Camera {
@@ -14,19 +15,15 @@ export class Camera {
     }
 
     pan(dx: number, dy: number) {
-        this.pos.x += dx;
-        this.pos.y += dy;
+        this.pos.x += dx * Controls.MouseSpeedFactor;
+        this.pos.y += dy * Controls.MouseSpeedFactor;
     }
 
-    zoomAt(mouseX: number, mouseY: number, factor: number) {
-        // Convert mouse to camera coordinates
-        const camX = (mouseX - this.pos.x) / this.zoom;
-        const camY = (mouseY - this.pos.y) / this.zoom;
-
+    zoomAt(c_mouse: Vec, ws_mouse: Vec, factor: number) {
         this.zoom *= factor;
 
         // Adjust offset to keep mouse point fixed
-        this.pos.x = mouseX - camX * this.zoom;
-        this.pos.y = mouseY - camY * this.zoom;
+        this.pos.x = c_mouse.x - ws_mouse.x * this.zoom;
+        this.pos.y = c_mouse.y - ws_mouse.y * this.zoom;
     }
 }

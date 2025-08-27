@@ -1,28 +1,35 @@
 import { Vertex } from "./Vertex";
 import { Edge } from "./Edge";
 import { repulsion } from "../forces/Repulsion";
-import { springAttraction } from "../forces/Attraction";
+import { centerAttraction, springAttraction } from "../forces/Attraction";
 import { bfsComponents, circlePoints, randomNiceColor } from "../utility/utils";
 import { RENDERING } from "../constants";
 import { Vec } from "./Vec";
+import { Camera } from "./Camera";
 
 export class Graph {
     ctx: CanvasRenderingContext2D;
+    canvas: HTMLCanvasElement;
+    camera: Camera;
+
     vertices: Record<string, Vertex>;
     edges: Array<Edge>;
-    canvas: HTMLCanvasElement;
+    component_origins: Set<Vertex>;
     selectedVertex?: Vertex;
 
-    constructor(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
+    constructor(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, camera: Camera) {
         this.ctx = ctx;
         this.canvas = canvas;
+        this.camera = camera;
         this.vertices = {};
         this.edges = [];
+        this.component_origins = new Set();
     }
     simulate() {
         /** Main physics Loop: Simulates FDG physics */
         repulsion(this.ctx, this.getVertices());
         springAttraction(this.ctx, this.edges);
+        centerAttraction(this.component_origins, this.canvas)
         this.update();
     }
 
@@ -33,19 +40,29 @@ export class Graph {
     }
 
     resetSelectedVertex() {
-        this.selectedVertex!.mass = this.selectedVertex!.calcMass();
+        this.selectedVertex!.mass = this.selectedVertex!.getOriginalMass();
         this.selectedVertex = undefined;
     }
 
     initVerticesPos() {
         const components = bfsComponents(this.getVertices());
+        const numComponents = [...components.keys()].length;
+        components.forEach(component => {
+            this.component_origins.add(component.get(0)![0]);
+        });
+        // Gets comp origin positions to set them in a circular pattern around the center of canvas
+        const comp_positions = circlePoints(
+            this.canvas.width / 2,
+            this.canvas.height / 2,
+            200, // TODO: Radius calc function
+            numComponents
+        );
 
         // Values for spacing disconnected components
-        let offsetX = 0;
-
-        for (const [_, layers] of components.entries()) {
-            const centerX = offsetX + this.canvas.width / 2;
-            const centerY = this.canvas.height / 2;
+        for (const [key, layers] of components.entries()) {
+            const comp_pos = comp_positions[key];
+            const centerX = comp_pos!.x;
+            const centerY = comp_pos!.y;
 
             // Iterate over each bfs layer
             for (const [level, nodes] of layers.entries()) {
@@ -63,8 +80,6 @@ export class Graph {
                     nodes[i].pos = positions[i];
                 }
             }
-
-            offsetX += 700; // shift next component to the right
         }
     }
 

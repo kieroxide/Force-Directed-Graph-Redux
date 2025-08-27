@@ -13,9 +13,8 @@ export function centerAttraction(
         const dx = canvasCenter.x - origin.pos.x;
         const dy = canvasCenter.y - origin.pos.y;
 
-        const dist = Math.sqrt(dx * dx + dy * dy) || 0.01;
-        origin.vector.x += dx * dist * PHYSICS.FORCES.CENTRAL_SPRING;
-        origin.vector.y += dy * dist * PHYSICS.FORCES.CENTRAL_SPRING;
+        origin.vector.x += dx * PHYSICS.FORCES.CENTRAL_SPRING;
+        origin.vector.y += dy * PHYSICS.FORCES.CENTRAL_SPRING;
     });
 }
 

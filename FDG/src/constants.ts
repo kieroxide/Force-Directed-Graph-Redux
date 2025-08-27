@@ -42,12 +42,12 @@ export const PHYSICS = {
     FORCES: {
         COLOUMBS_LAW: 1000,
         SPRING: 0.025,
-        CENTRAL_SPRING: 0.000025,
+        CENTRAL_SPRING: 0.05,
         REST_LENGTH: 100,
         BOX_BUFFER: 10,
         DAMPING: 0.98,
     },
     CLAMPS: {
-        MAX_SPEED: 5,
+        MAX_SPEED: 20,
     },
 } as const;

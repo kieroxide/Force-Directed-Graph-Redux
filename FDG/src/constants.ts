@@ -47,6 +47,6 @@ export const PHYSICS = {
         DAMPING: 0.98,
     },
     CLAMPS: {
-        MAX_SPEED: 20,
+        MAX_SPEED: 10,
     },
 } as const;

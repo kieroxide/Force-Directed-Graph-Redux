@@ -1,7 +1,6 @@
 import { Vertex } from "../classes/Vertex";
 import { Graph } from "../classes/Graph";
 import { Edge } from "../classes/Edge";
-
 import GRAPHDATA from "../../data/games.json";
 import type { ObjGraphData } from "../objects/importedGraph";
 

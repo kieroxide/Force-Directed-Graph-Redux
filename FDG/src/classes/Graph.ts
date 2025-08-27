@@ -4,12 +4,14 @@ import { repulsion } from "../forces/Repulsion";
 import { springAttraction } from "../forces/Attraction";
 import { bfsComponents, circlePoints, randomNiceColor } from "../utility/utils";
 import { RENDERING } from "../constants";
+import { Vec } from "./Vec";
 
 export class Graph {
     ctx: CanvasRenderingContext2D;
     vertices: Record<string, Vertex>;
     edges: Array<Edge>;
     canvas: HTMLCanvasElement;
+    selectedVertex?: Vertex;
 
     constructor(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
         this.ctx = ctx;
@@ -22,6 +24,17 @@ export class Graph {
         repulsion(this.ctx, this.getVertices());
         springAttraction(this.ctx, this.edges);
         this.update();
+    }
+
+    setSelectedVertex(vertex: Vertex) {
+        vertex.mass = Infinity; // Prevents Movement
+        vertex.vector = new Vec(0, 0); // Kills velocity
+        this.selectedVertex = vertex;
+    }
+
+    resetSelectedVertex() {
+        this.selectedVertex!.mass = this.selectedVertex!.calcMass();
+        this.selectedVertex = undefined;
     }
 
     initVerticesPos() {
@@ -73,6 +86,7 @@ export class Graph {
             }
         }
     }
+
     initEdgeColour() {
         /** Assigns unique random colours to each edge type */
         let colours = new Map<string, string>(); // type->colour

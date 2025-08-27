@@ -10,7 +10,6 @@ export function setupControls(
     graph: Graph
 ) {
     let isDraggingCamera = false;
-    let isDraggingVertex = false;
 
     canvas.addEventListener("mousedown", (e: MouseEvent) => {
         /**  Handles holding mouse click:
@@ -22,8 +21,7 @@ export function setupControls(
         // Check if we clicked a vertex first
         for (const vertex of graph.getVertices()) {
             if (vertex.inBoundary(mousePos, ctx, camera)) {
-                graph.selectedVertex = vertex;
-                isDraggingVertex = true;
+                graph.setSelectedVertex(vertex);
                 return;
             }
         }
@@ -35,24 +33,21 @@ export function setupControls(
     window.addEventListener("mouseup", () => {
         // When mouse hold is ended, resets to unactive values
         isDraggingCamera = false;
-        isDraggingVertex = false;
-        graph.selectedVertex = undefined;
+        graph.resetSelectedVertex();
     });
 
     canvas.addEventListener("mouseleave", () => {
         // Stop dragging if mouse leaves canvas
         isDraggingCamera = false;
-        isDraggingVertex = false;
-        graph.selectedVertex = undefined;
+        graph.resetSelectedVertex();
     });
 
     canvas.addEventListener("mousemove", (e: MouseEvent) => {
         /** Switches between camera control and vertex dragging  */
         if (isDraggingCamera) {
             camera.pan(e.movementX, e.movementY);
-        } else if (isDraggingVertex) {
+        } else if (graph.selectedVertex !== undefined) {
             const vertex = graph.selectedVertex;
-            if (vertex == undefined) return; // just to shut up typescript
 
             const c_mouse = browserToCanvas(canvas, e);
             const ws_mouse = c_mouse.canvasToWorld(camera);
@@ -64,11 +59,15 @@ export function setupControls(
     canvas.addEventListener("wheel", (e: WheelEvent) => {
         /** For zooming in and out of the camera */
         e.preventDefault(); // prevents scrolling browser
-        const c_mouse = browserToCanvas(canvas, e)
+        const c_mouse = browserToCanvas(canvas, e);
         const ms_mouse = c_mouse.canvasToWorld(camera);
-        
+
         // decides whether to zoom it or out
-        const factor = e.deltaY < 0 ? Controls.ZoomScaleFactor : 1 / Controls.ZoomScaleFactor;
+        const factor =
+            e.deltaY < 0
+                ? Controls.ZoomScaleFactor
+                : 1 / Controls.ZoomScaleFactor;
+
         camera.zoomAt(c_mouse, ms_mouse, factor);
     });
 }

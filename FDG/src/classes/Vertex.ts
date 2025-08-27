@@ -45,6 +45,29 @@ export class Vertex {
         this.vector.y *= PHYSICS.FORCES.DAMPING;
     }
 
+    inBoundary(
+        point: Vec,
+        ctx: CanvasRenderingContext2D,
+        camera: Camera
+    ): boolean {
+        const boundaries = this.getBoundaries(ctx);
+        const ws_point = point.canvasToWorld(camera);
+
+        const check_x =
+            boundaries.left <= ws_point.x && ws_point.x <= boundaries.right;
+        const check_y =
+            boundaries.top <= ws_point.y && ws_point.y <= boundaries.bottom;
+        return check_x && check_y;
+    }
+
+    getBoundaries(ctx: CanvasRenderingContext2D) {
+        const _left = this.pos.x - this.getBoxWidth(ctx) / 2;
+        const _right = this.pos.x + this.getBoxWidth(ctx) / 2;
+        const _top = this.pos.y - this.getBoxHeight() / 2;
+        const _bottom = this.pos.y + this.getBoxHeight() / 2;
+        return { left: _left, right: _right, top: _top, bottom: _bottom };
+    }
+
     getNeighbours(): Set<Vertex> {
         let neighbours = new Set<Vertex>();
         for (const edge of this.edges) {

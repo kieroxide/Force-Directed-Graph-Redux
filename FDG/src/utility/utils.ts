@@ -2,6 +2,15 @@ import { Vec } from "../classes/Vec";
 import { Vertex } from "../classes/Vertex";
 import { RENDERING } from "../constants";
 
+export function browserToCanvas(canvas: HTMLCanvasElement, e: MouseEvent) {
+    // Shifts browser mouse position to canvas position
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+
+    return new Vec(mouseX, mouseY);
+}
+
 export function setFontSize(fontStr: string, newSizePx: number): string {
     // Regex matches the first number + 'px'
     return fontStr.replace(/(\d+)px/, `${newSizePx}px`);
@@ -13,9 +22,15 @@ export function resizeCanvas(canvas: HTMLCanvasElement) {
 }
 
 export function randomNiceColor() {
-    const hue = Math.floor(Math.random() * RENDERING.COLOURS.HUE_MAX) + RENDERING.COLOURS.HUE_MIN;
-    const saturation = Math.floor(Math.random() * RENDERING.COLOURS.SATURATION_MAX) + RENDERING.COLOURS.SATURATION_MIN; 
-    const lightness = Math.floor(Math.random() * RENDERING.COLOURS.LIGHTNESS_MAX) + RENDERING.COLOURS.LIGHTNESS_MIN; 
+    const hue =
+        Math.floor(Math.random() * RENDERING.COLOURS.HUE_MAX) +
+        RENDERING.COLOURS.HUE_MIN;
+    const saturation =
+        Math.floor(Math.random() * RENDERING.COLOURS.SATURATION_MAX) +
+        RENDERING.COLOURS.SATURATION_MIN;
+    const lightness =
+        Math.floor(Math.random() * RENDERING.COLOURS.LIGHTNESS_MAX) +
+        RENDERING.COLOURS.LIGHTNESS_MIN;
     return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
 }
 

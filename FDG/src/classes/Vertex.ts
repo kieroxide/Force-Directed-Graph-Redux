@@ -83,12 +83,7 @@ export class Vertex {
         return neighbours;
     }
 
-    calcMass() {
-        // Made into function incase I add more factors for mass
-        return this.edges.length * this.mass;
-    }
-
-    getTextMass() {
+    getOriginalMass() {
         // Made into function incase I add more factors for mass
         return this.edges.length;
     }
@@ -100,7 +95,7 @@ export class Vertex {
     }
     getBoxHeight() {
         const massFontSize =
-            RENDERING.FONT.SIZE + this.getTextMass() * RENDERING.FONT.MASS_WEIGHT;
+            RENDERING.FONT.SIZE + this.getOriginalMass() * RENDERING.FONT.MASS_WEIGHT;
 
         return massFontSize + RENDERING.TEXT_BOX.PADDING_HEIGHT / 2;
     }
@@ -117,7 +112,7 @@ export class Vertex {
     draw(ctx: CanvasRenderingContext2D) {
         // Set text properties BEFORE measuring (important!)
         const massFontSize =
-            RENDERING.FONT.SIZE + this.getTextMass() * RENDERING.FONT.MASS_WEIGHT;
+            RENDERING.FONT.SIZE + this.getOriginalMass() * RENDERING.FONT.MASS_WEIGHT;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
 

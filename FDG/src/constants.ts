@@ -27,10 +27,10 @@ export const RENDERING = {
     COLOURS: {
         HUE_MIN: 0,
         HUE_MAX: 359,
-        SATURATION_MIN: 10,
-        SATURATION_MAX: 30,
-        LIGHTNESS_MIN: 50,
-        LIGHTNESS_MAX: 50,
+        SATURATION_MIN: 40,
+        SATURATION_MAX: 50,
+        LIGHTNESS_MIN: 40,
+        LIGHTNESS_MAX: 60,
     },
 
     INIT_SETTINGS: {

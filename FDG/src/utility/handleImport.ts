@@ -1,8 +1,10 @@
 import { Vertex } from "../classes/Vertex";
 import { Graph } from "../classes/Graph";
 import { Edge } from "../classes/Edge";
-import GRAPHDATA from "../../data/games.json";
-import type { ObjGraphData } from "../objects/importedGraph";
+import ENTITIES from "../../data/entities.json";
+import RELATIONS from "../../data/relations.json";
+import PROPERTIES from "../../data/properties.json";
+import type { EntityMap, PropertyMap, RelationshipsMap } from "../objects/importedGraph";
 
 /**
  * Takes graph data in my custom format and instances the objects for the graph
@@ -12,27 +14,22 @@ export function generate_graph_from_json(
     ctx: CanvasRenderingContext2D,
     canvas: HTMLCanvasElement
 ) {
-    const graphData: ObjGraphData = GRAPHDATA;
+    const entities: EntityMap = ENTITIES
+    const relations: RelationshipsMap = RELATIONS
+    const properties: PropertyMap = PROPERTIES
     let graph = new Graph(ctx, canvas);
 
     // Creates Vertex instances
-    for (const [nodeName, nodeData] of Object.entries(graphData.nodes)) {
+    for (const [vertexID, vertexLabel] of Object.entries(entities)) {
         // Some Vertex's are not games so they will not have a release date
-        const releaseDate = nodeData.releaseDate ?? undefined;
-        graph.vertices[nodeName] = new Vertex(
-            nodeName,
-            nodeData.type,
-            releaseDate
-        );
+        graph.vertices[vertexID] = new Vertex(vertexID, vertexLabel);
     }
 
-    // Creates Edge instances
-    for (const edgeData of graphData.edges) {
-        const source = graph.vertices[edgeData.source];
-        const target = graph.vertices[edgeData.target];
-        // This if ensures the node is in the vertices array
-        if (source && target) {
-            graph.edges.push(new Edge(source, target, edgeData.type));
+    for (const [sourceId, propMap] of Object.entries(relations)) {
+        for (const [propertyId, targetIds] of Object.entries(propMap)) {
+            for (const targetId of targetIds) {
+                graph.edges.push(new Edge(sourceId, targetId, properties[propertyId], graph));
+            }
         }
     }
     return graph;

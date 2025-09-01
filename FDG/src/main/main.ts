@@ -1,4 +1,4 @@
-import { generate_graph_from_json } from "../utility/handleImport";
+import { generateGraphFromJson } from "../utility/handleImport";
 import { render } from "./render";
 import { Camera } from "../classes/Camera";
 import { setupControls } from "../utility/inputHandler";
@@ -14,7 +14,7 @@ window.onload = () => {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    let graph = generate_graph_from_json(ctx, canvas);
+    let graph = generateGraphFromJson(ctx, canvas);
     graph.initVerticesPos();
     graph.initVertexColour();
     graph.initEdgeColour();

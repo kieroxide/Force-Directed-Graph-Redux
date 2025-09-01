@@ -1,8 +1,8 @@
+import type { Camera } from "./Camera";
 import { Vec } from "./Vec";
 import { Edge } from "./Edge";
 import { PHYSICS, RENDERING } from "../constants";
 import { clamp, setFontSize } from "../utility/utils";
-import type { Camera } from "./Camera";
 
 export class Vertex {
     // Euclidean Data
@@ -12,9 +12,10 @@ export class Vertex {
 
     // Generic Data
     name: string;
+    id: string;
     type: string;
     textMass: number;
-    releaseDate: string | undefined;
+    releaseDate?: string;
     edges: Array<Edge>;
 
     // Visual Label
@@ -22,19 +23,14 @@ export class Vertex {
     labelColour?: string;
     private _textWidth?: number;
 
-    constructor(name: string, type: string, releaseDate: string | undefined) {
+    constructor(id: string, name: string, type: string = "") {
         this.pos = new Vec(200, 200);
         this.vector = new Vec(0, 0);
         this.mass = 1;
         this.textMass = 0;
-
+        this.id = id;
         this.name = name;
         this.type = type;
-
-        this.releaseDate = releaseDate;
-        if (this.releaseDate === undefined) {
-            this.releaseDate = "";
-        }
 
         this.edges = [];
 
@@ -42,7 +38,9 @@ export class Vertex {
         this.labelColour = undefined;
     }
 
-    // Method to update position of the Vertex using the vector's values. Also applies damping
+    /**
+     * Updates position of the Vertex using the vector's values. Also applies damping
+     */
     update() {
         this.pos.x += clamp(this.vector.x, PHYSICS.CLAMPS.MAX_SPEED);
         this.pos.y += clamp(this.vector.y, PHYSICS.CLAMPS.MAX_SPEED);
@@ -77,8 +75,8 @@ export class Vertex {
     getNeighbours(): Set<Vertex> {
         let neighbours = new Set<Vertex>();
         for (const edge of this.edges) {
-            neighbours.add(edge.target);
-            neighbours.add(edge.source);
+            neighbours.add(edge.targetRef);
+            neighbours.add(edge.sourceRef);
         }
         return neighbours;
     }
@@ -95,7 +93,8 @@ export class Vertex {
     }
     getBoxHeight() {
         const massFontSize =
-            RENDERING.FONT.SIZE + this.getOriginalMass() * RENDERING.FONT.MASS_WEIGHT;
+            RENDERING.FONT.SIZE +
+            this.getOriginalMass() * RENDERING.FONT.MASS_WEIGHT;
 
         return massFontSize + RENDERING.TEXT_BOX.PADDING_HEIGHT / 2;
     }
@@ -112,7 +111,8 @@ export class Vertex {
     draw(ctx: CanvasRenderingContext2D) {
         // Set text properties BEFORE measuring (important!)
         const massFontSize =
-            RENDERING.FONT.SIZE + this.getOriginalMass() * RENDERING.FONT.MASS_WEIGHT;
+            RENDERING.FONT.SIZE +
+            this.getOriginalMass() * RENDERING.FONT.MASS_WEIGHT;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
 

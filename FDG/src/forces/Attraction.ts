@@ -24,8 +24,8 @@ export function springAttraction(
     strength: number = PHYSICS.FORCES.SPRING
 ) {
     for (const edge of edges) {
-        const vertexA = edge.source;
-        const vertexB = edge.target;
+        const vertexA = edge.sourceRef;
+        const vertexB = edge.targetRef;
 
         // calculates distance between centers of the vertices
         const dx = vertexB.pos.x - vertexA.pos.x;

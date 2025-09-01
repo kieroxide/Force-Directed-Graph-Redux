@@ -3,17 +3,22 @@
 
 // Maps an entity QID to its label
 export interface EntityMap {
-  [entity_id: string]: string;
+    [entity_id: string]: EntityInfo;
+}
+
+export interface EntityInfo {
+  label: string;
+  type: string;    
 }
 
 // Maps a property PID to its label
 export interface PropertyMap {
-  [property_id: string]: string;
+    [property_id: string]: string;
 }
 
 // Maps a source entity to its outgoing relationships
 export interface RelationshipsMap {
-  [source_id: string]: {
-    [property_id: string]: string[]; // Array of target QIDs
-  };
+    [source_id: string]: {
+        [property_id: string]: string[]; // Array of target QIDs
+    };
 }

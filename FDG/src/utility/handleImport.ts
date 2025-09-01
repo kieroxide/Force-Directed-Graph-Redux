@@ -20,8 +20,8 @@ export function generateGraphFromJson(
     const properties: PropertyMap = PROPERTIES
     let graph = new Graph(ctx, canvas);
 
-    for (const [vertexID, vertexLabel] of Object.entries(entities)) {
-        graph.vertices[vertexID] = new Vertex(vertexID, vertexLabel);
+    for (const [vertexID, vertexData] of Object.entries(entities)) {
+        graph.vertices[vertexID] = new Vertex(vertexID, vertexData.label, vertexData.type);
     }
 
     for (const [sourceId, propMap] of Object.entries(relations)) {

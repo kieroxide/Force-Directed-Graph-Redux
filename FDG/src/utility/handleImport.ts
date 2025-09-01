@@ -8,9 +8,10 @@ import type { EntityMap, PropertyMap, RelationshipsMap } from "../objects/import
 
 /**
  * Takes graph data in my custom format and instances the objects for the graph
- * @param graphData
+ * @param ctx - Canvas rendering context
+ * @param canvas - HTML canvas element
  */
-export function generate_graph_from_json(
+export function generateGraphFromJson(
     ctx: CanvasRenderingContext2D,
     canvas: HTMLCanvasElement
 ) {
@@ -19,9 +20,7 @@ export function generate_graph_from_json(
     const properties: PropertyMap = PROPERTIES
     let graph = new Graph(ctx, canvas);
 
-    // Creates Vertex instances
     for (const [vertexID, vertexLabel] of Object.entries(entities)) {
-        // Some Vertex's are not games so they will not have a release date
         graph.vertices[vertexID] = new Vertex(vertexID, vertexLabel);
     }
 

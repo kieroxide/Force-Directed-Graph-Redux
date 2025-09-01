@@ -31,6 +31,7 @@ export class Graph {
      * Main physics Loop: Simulates FDG physics
      */
     simulate() {
+        console.log(this.getVertices().length)
         repulsion(this.ctx, this.getVertices());
         springAttraction(this.ctx, this.edges);
         centerAttraction(this.component_origins, this.canvas);

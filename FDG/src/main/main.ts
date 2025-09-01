@@ -20,7 +20,7 @@ window.onload = () => {
     graph.initEdgeColour();
     let camera = new Camera();
     setupControls(ctx, canvas, camera, graph);
-    for (let i = 0; i < 1; i++) {
+    for (let i = 0; i < 100; i++) {
         graph.simulate();
     }
     render(ctx, canvas, camera, graph);

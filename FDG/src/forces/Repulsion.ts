@@ -1,6 +1,5 @@
 import type { Vertex } from "../classes/Vertex";
 import { PHYSICS } from "../constants";
-//import { quadtree } from "d3-quadtree";
 
 export function repulsion(
     ctx: CanvasRenderingContext2D,

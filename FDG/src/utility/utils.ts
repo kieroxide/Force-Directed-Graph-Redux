@@ -2,8 +2,10 @@ import { Vec } from "../classes/Vec";
 import { Vertex } from "../classes/Vertex";
 import { RENDERING } from "../constants";
 
+/**
+ * Shifts browser mouse position to canvas position
+ */
 export function browserToCanvas(canvas: HTMLCanvasElement, e: MouseEvent) {
-    // Shifts browser mouse position to canvas position
     const rect = canvas.getBoundingClientRect();
     const mouseX = e.clientX - rect.left;
     const mouseY = e.clientY - rect.top;
@@ -38,15 +40,15 @@ export function clamp(val: number, absMaxVal: number) {
     return Math.max(-absMaxVal, Math.min(val, absMaxVal));
 }
 
-/** Initial starting position helper functions */
-
+/**
+ * Returns equidistant points around circle with inputted midpoint and radius
+ */
 export function circlePoints(
     centerX: number,
     centerY: number,
     radius: number,
     numOfPoints = 100
 ): Array<Vec> {
-    /**Returns equidistant points around circle with inputted midpoint and radius */
     const points = [];
     for (let i = 0; i < numOfPoints; i++) {
         const theta = (2 * Math.PI * i) / numOfPoints - Math.PI / 2;

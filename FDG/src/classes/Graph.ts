@@ -1,10 +1,10 @@
 import { Vertex } from "./Vertex";
 import { Edge } from "./Edge";
+import { Vec } from "./Vec";
 import { repulsion } from "../forces/Repulsion";
 import { centerAttraction, springAttraction } from "../forces/Attraction";
 import { bfsComponents, circlePoints, randomNiceColor } from "../utility/utils";
 import { RENDERING } from "../constants";
-import { Vec } from "./Vec";
 
 export class Graph {
     ctx: CanvasRenderingContext2D;
@@ -22,11 +22,18 @@ export class Graph {
         this.edges = [];
         this.component_origins = new Set();
     }
+
+    getVertex(id: string) {
+        return this.vertices[id];
+    }
+
+    /**
+     * Main physics Loop: Simulates FDG physics
+     */
     simulate() {
-        /** Main physics Loop: Simulates FDG physics */
         repulsion(this.ctx, this.getVertices());
         springAttraction(this.ctx, this.edges);
-        centerAttraction(this.component_origins, this.canvas)
+        centerAttraction(this.component_origins, this.canvas);
         this.update();
     }
 
@@ -44,7 +51,7 @@ export class Graph {
     initVerticesPos() {
         const components = bfsComponents(this.getVertices());
         const numComponents = [...components.keys()].length;
-        components.forEach(component => {
+        components.forEach((component) => {
             this.component_origins.add(component.get(0)![0]);
         });
         // Gets comp origin positions to set them in a circular pattern around the center of canvas
@@ -80,8 +87,10 @@ export class Graph {
         }
     }
 
+    /**
+     * Assigns unique random colours to each vertex type
+     */
     initVertexColour() {
-        /** Assigns unique random colours to each vertex type */
         let colours = new Map<string, string>(); // type->colour
 
         // Iterates and assigns each vertex type a unique colour
@@ -90,8 +99,9 @@ export class Graph {
                 vertex.labelColour = colours.get(vertex.type);
             } else {
                 // Avoids directly equal colours
+                let colour: string;
                 do {
-                    var colour = randomNiceColor();
+                    colour = randomNiceColor();
                 } while (new Set(colours.values()).has(colour));
                 colours.set(vertex.type, colour);
                 vertex.labelColour = colour;
@@ -99,8 +109,10 @@ export class Graph {
         }
     }
 
+    /**
+     * Assigns unique random colours to each edge type
+     */
     initEdgeColour() {
-        /** Assigns unique random colours to each edge type */
         let colours = new Map<string, string>(); // type->colour
 
         // Iterates and assigns each vertex type a unique colour
@@ -109,8 +121,9 @@ export class Graph {
                 edge.lineColour = colours.get(edge.type);
             } else {
                 // Avoids directly equal colours
+                let colour: string;
                 do {
-                    var colour = randomNiceColor();
+                    colour = randomNiceColor();
                 } while (new Set(colours.values()).has(colour));
                 colours.set(edge.type, colour);
                 edge.lineColour = colour;

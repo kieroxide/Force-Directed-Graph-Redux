@@ -12,7 +12,8 @@ export function setupControls(
     let isDraggingCamera = false;
 
     canvas.addEventListener("mousedown", (e: MouseEvent) => {
-        /**  Handles holding mouse click:
+        /**
+         * Handles holding mouse click:
          * - Handles boundary check on clicking on vertices
          * - Handles dragging camera check
          */
@@ -31,19 +32,25 @@ export function setupControls(
     });
 
     window.addEventListener("mouseup", () => {
-        // When mouse hold is ended, resets to unactive values
+        /**
+         * When mouse hold is ended, resets to unactive values
+         */
         isDraggingCamera = false;
         graph.resetSelectedVertex();
     });
 
     canvas.addEventListener("mouseleave", () => {
-        // Stop dragging if mouse leaves canvas
+        /**
+         * Stop dragging if mouse leaves canvas
+         */
         isDraggingCamera = false;
         graph.resetSelectedVertex();
     });
 
     canvas.addEventListener("mousemove", (e: MouseEvent) => {
-        /** Switches between camera control and vertex dragging  */
+        /**
+         * Switches between camera control and vertex dragging
+         */
         if (isDraggingCamera) {
             camera.pan(e.movementX, e.movementY);
         } else if (graph.selectedVertex !== undefined) {

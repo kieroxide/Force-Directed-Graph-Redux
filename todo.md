@@ -8,3 +8,4 @@
 - Switch between quadratic and linear repulsion depending on node type **NOT GOOD**
 - Add a calculation of the radius required to guarantee no overlap on init
 - Add a shrinking ideal spring length to a constant ideal spring length
+- Ensure all inputs are cleaned 

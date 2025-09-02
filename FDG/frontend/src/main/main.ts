@@ -1,7 +1,7 @@
 import { generateGraphFromJson } from "../utility/handleImport";
 import { render } from "./render";
 import { Camera } from "../classes/Camera";
-import { setupControls } from "../utility/inputHandler";
+import { setupControls, setupHtmlInputs } from "../utility/inputHandler";
 import { resizeCanvas } from "../utility/utils";
 
 window.onload = () => {
@@ -20,7 +20,8 @@ window.onload = () => {
     graph.initEdgeColour();
     let camera = new Camera();
     setupControls(ctx, canvas, camera, graph);
-    for (let i = 0; i < 100; i++) {
+    setupHtmlInputs(document, ctx, canvas)
+    for (let i = 0; i < 1; i++) {
         graph.simulate();
     }
     render(ctx, canvas, camera, graph);

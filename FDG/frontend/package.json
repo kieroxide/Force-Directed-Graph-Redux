@@ -5,12 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
+    "start:backend": "cd ../backend && python WikiGraphServer.py",
+    "start:both": "concurrently \"npm run start:backend\" \"npm run dev\""
   },
   "devDependencies": {
     "typescript": "~5.8.3",
-    "vite": "^7.1.2"
+    "vite": "^7.1.2",
+    "concurrently": "^7.6.0"
   },
   "dependencies": {
     "d3": "^7.9.0",

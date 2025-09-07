@@ -1,8 +1,8 @@
 export class MathUtility {
     /**
-     * Clamps a value between -absMaxVal and +absMaxVal
+     * Clamps a value between a minimum and maximum
      */
-    static clamp(val: number, absMaxVal: number) {
-        return Math.max(-absMaxVal, Math.min(val, absMaxVal));
+    static clamp(value: number, min: number, max: number) {
+        return Math.max(min, Math.min(value, max));
     }
 }

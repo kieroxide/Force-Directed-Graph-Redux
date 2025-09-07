@@ -4,32 +4,27 @@ import { Vertex } from "./Vertex.ts";
 export class Edge {
     private _sourceId: string;
     private _sourceRef: Vertex;
-    private _targetId: string;
-    private _targetRef: Vertex;
-    private _type: string;
-    private _lineColour: string;
-
     get sourceRef() {
         return this._sourceRef;
     }
+    
+    private _targetId: string;
+    private _targetRef: Vertex;
     get targetRef() {
         return this._targetRef;
     }
-    get lineColour() {
-        return this._lineColour;
-    }
-    get type() {
-        return this._type
-    }
-    public set lineColour(colour: string) {
-        this._lineColour = colour;
-    }
 
+    private _type: string;
+    get type() {
+        return this._type;
+    }
+    lineColour: string;
+    
     constructor(sourceID: string, targetID: string, type: string, graph: Graph) {
         this._sourceId = sourceID;
         this._targetId = targetID;
         this._type = type;
-        this._lineColour = "#000000"
+        this.lineColour = "#000000"; // Default colour
         this._sourceRef = graph.getVertex(sourceID);
         this._targetRef = graph.getVertex(targetID);
 
@@ -39,7 +34,7 @@ export class Edge {
     }
 
     draw(ctx: CanvasRenderingContext2D) {
-        ctx.strokeStyle = this._lineColour || "#00000012";
+        ctx.strokeStyle = this.lineColour || "#00000012";
         ctx.lineWidth = 4;
         ctx.beginPath();
         ctx.moveTo(this._sourceRef.pos.x, this._sourceRef.pos.y);

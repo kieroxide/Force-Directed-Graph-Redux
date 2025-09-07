@@ -10,32 +10,46 @@ import { RENDERING } from "../../constants";
 export class Graph {
     private _vertexColours = new Map<string, string>();
     private _edgeColours = new Map<string, string>();
-    ctx: CanvasRenderingContext2D;
-    canvas: HTMLCanvasElement;
+    private _ctx: CanvasRenderingContext2D;
+    private _canvas: HTMLCanvasElement;
 
-    vertices: Record<string, Vertex>;
-    edges: Array<Edge>;
-    component_origins: Set<Vertex>;
-    selectedVertex?: Vertex;
-    lastClickedVertex?: Vertex;
+    private _vertices: Record<string, Vertex>;
+    get vertices() {
+        return this._vertices;
+    }
+    private _edges: Array<Edge>;
+    get edges() {
+        return this._edges;
+    }
+    private _component_origins: Set<Vertex>;
+
+    private _selectedVertex?: Vertex;
+    get selectedVertex() {
+        return this._selectedVertex;
+    }
+
+    private _lastClickedVertex?: Vertex;
+    get lastClickedVertex() {
+        return this._lastClickedVertex;
+    }
 
     /** Creates a new graph with rendering context and canvas */
     constructor(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
-        this.ctx = ctx;
-        this.canvas = canvas;
-        this.vertices = {};
-        this.edges = [];
-        this.component_origins = new Set();
+        this._ctx = ctx;
+        this._canvas = canvas;
+        this._vertices = {};
+        this._edges = [];
+        this._component_origins = new Set();
     }
 
     /** Gets vertex by ID */
     getVertex(id: string) {
-        return this.vertices[id];
+        return this._vertices[id];
     }
 
     /** Checks if edge already exists between two vertices */
     private edgeExists(sourceId: string, targetId: string, property: string): boolean {
-        return this.edges.some(
+        return this._edges.some(
             (edge) =>
                 (edge.sourceRef.id === sourceId && edge.targetRef.id === targetId && edge.type === property) ||
                 (edge.sourceRef.id === targetId && edge.targetRef.id === sourceId && edge.type === property)
@@ -44,7 +58,6 @@ export class Graph {
 
     /** Adds edge between vertices if it doesn't already exist */
     addEdge(sourceId: string, targetId: string, property: string): boolean {
-        // Check if edge already exists
         if (this.edgeExists(sourceId, targetId, property)) {
             console.log(`Edge already exists: ${sourceId} -> ${targetId} (${property})`);
             return false;
@@ -57,27 +70,30 @@ export class Graph {
             console.error(`Cannot create edge: vertex not found`);
             return false;
         }
+
         const edge = new Edge(sourceId, targetId, property, this);
-        sourceVertex.addNeighbour(edge);
-        targetVertex.addNeighbour(edge);
-        this.edges.push(edge);
+
+        sourceVertex.connectedEdges.push(edge);
+        targetVertex.connectedEdges.push(edge);
+        this._edges.push(edge);
+
         return true;
     }
 
     /** Runs physics simulation step (forces + movement) */
     simulate() {
-        Repulsion.repulsion(this.ctx, this.getVertices());
-        Attraction.springAttraction(this.ctx, this.edges);
-        Attraction.centerAttraction(this.component_origins, this.canvas);
+        Repulsion.repulsion(this._ctx, this.getVertices());
+        Attraction.springAttraction(this._ctx, this._edges);
+        Attraction.centerAttraction(this._component_origins, this._canvas);
         this.update();
     }
 
     /** Sets vertex as selected and stops its movement */
     setSelectedVertex(vertex: Vertex) {
-        vertex.vector = new Vec(0, 0); // Kills velocity
+        vertex.killVelocity()
         vertex.selected = true;
-        this.selectedVertex = vertex;
-        this.lastClickedVertex = vertex;
+        this._selectedVertex = vertex;
+        this._lastClickedVertex = vertex;
     }
 
     /** Deselects currently selected vertex */
@@ -86,7 +102,7 @@ export class Graph {
             return;
         }
         this.selectedVertex.selected = false;
-        this.selectedVertex = undefined;
+        this._selectedVertex = undefined;
     }
 
     /** Positions new vertices in circle around existing graph center */
@@ -115,12 +131,12 @@ export class Graph {
         const components = GeometryUtility.bfsComponents(vertices);
         const numComponents = [...components.keys()].length;
         components.forEach((component: Map<number, Vertex[]>) => {
-            this.component_origins.add(component.get(0)![0]);
+            this._component_origins.add(component.get(0)![0]);
         });
         // Gets comp origin positions to set them in a circular pattern around the center of canvas
         const comp_positions = GeometryUtility.circlePoints(
-            this.canvas.width / 2,
-            this.canvas.height / 2,
+            this._canvas.width / 2,
+            this._canvas.height / 2,
             200, // TODO: Radius calc function
             numComponents
         );
@@ -163,7 +179,7 @@ export class Graph {
 
     /** Assigns unique colors to edge types */
     initEdgeColour() {
-        for (const edge of this.edges) {
+        for (const edge of this._edges) {
             if (this._edgeColours.has(edge.type)) {
                 edge.lineColour = this._edgeColours.get(edge.type)!;
             } else {
@@ -179,7 +195,7 @@ export class Graph {
 
     /** Returns all vertices as array */
     getVertices(): Array<Vertex> {
-        return Object.values(this.vertices);
+        return Object.values(this._vertices);
     }
 
     /** Updates all vertex positions */
@@ -191,17 +207,17 @@ export class Graph {
 
     /** Renders all edges and vertices to canvas */
     draw() {
-        this.edges.forEach((edge) => edge.draw(this.ctx));
+        this._edges.forEach((edge) => edge.draw(this._ctx));
         for (const vertex of this.getVertices()) {
-            vertex.draw(this.ctx);
+            vertex.draw(this._ctx);
         }
     }
 
     /** Clears all graph data */
     clear() {
-        this.vertices = {};
-        this.edges = [];
-        this.component_origins = new Set();
-        this.selectedVertex = undefined;
+        this._vertices = {};
+        this._edges = [];
+        this._component_origins = new Set();
+        this._selectedVertex = undefined;
     }
 }

@@ -8,86 +8,70 @@ import { CanvasUtility } from "../utility/CanvasUtility";
 export class Vertex {
     // Euclidean Data
     private _pos: Vec;
-    private _vector: Vec;
+    get pos() {
+        return this._pos;
+    }
 
+    private _velocity: Vec;
+    get velocity() {
+        return this._velocity;
+    }
+    killVelocity() {
+        this._velocity = new Vec(0, 0);
+    }
+    
+    private _connectedEdges: Array<Edge>;
+    get connectedEdges() {
+        return this._connectedEdges;
+    }
+
+    private _selected: boolean;
+    set selected(isSelected: boolean) {
+        this._selected = isSelected;
+    }
     // Generic Data
     private _name: string;
+
     private _id: string;
+    get id() {
+        return this._id;
+    }
+
     private _type: string;
-    private _neighbours: Array<Edge>;
+    get type() {
+        return this._type;
+    }
 
     // Visual Label
     private _label: string;
+    get label() {
+        return this._label;
+    }
+
     private _TEXT_BOX: {
         PADDING_WIDTH: number;
         PADDING_HEIGHT: number;
         BORDER_COLOR: string;
         BORDER_WIDTH: number;
     };
-    private _labelColour?: string;
-    private _selected: boolean;
-    private _textWidth?: number;
-
-    set selected(isSelected: boolean) {
-        this._selected = isSelected;
-    }
-
-    get labelColour(): string {
-        return this._labelColour || "";
-    }
-
-    set labelColour(colour: string) {
-        this._labelColour = colour;
-    }
-
-    get pos() {
-        return this._pos;
-    }
-    get neighbours() {
-        return this._neighbours;
-    }
-    set neighbours(neighbours_: Edge[]) {
-        this._neighbours = neighbours_;
-    }
-    addNeighbour(edge: Edge) {
-        this._neighbours.push(edge);
-    }
     get TEXT_BOX() {
         return this._TEXT_BOX;
     }
-    get textWidth() {
-        return this._textWidth;
-    }
-    set textWidth(width: number | undefined) {
-        this._textWidth = width;
-    }
-    get label() {
-        return this._label;
-    }
-    get id() {
-        return this._id;
-    }
-    get type() {
-        return this._type;
-    }
-    get vector() {
-        return this._vector;
-    }
-    set vector(vec: Vec) {
-        this._vector = vec;
-    }
+
+    public textWidth?: number;
+    labelColour?: string;
 
     constructor(id: string, name: string, type: string = "") {
         this._pos = new Vec(200, 200);
-        this._vector = new Vec(0, 0);
+        this._velocity = new Vec(0, 0);
         this._id = id;
         this._name = name;
         this._type = type;
         this._selected = false;
-        this._neighbours = [];
+        this._connectedEdges = [];
 
         this._label = this._name;
-        this._labelColour = undefined;
+        this.labelColour = undefined;
 
         this._TEXT_BOX = {
             PADDING_WIDTH: 50,
@@ -101,11 +85,12 @@ export class Vertex {
      * Updates position of the Vertex using the vector's values. Also applies damping
      */
     update() {
-        this._pos.x += MathUtility.clamp(this._vector.x, PHYSICS.CLAMPS.MAX_SPEED);
-        this._pos.y += MathUtility.clamp(this._vector.y, PHYSICS.CLAMPS.MAX_SPEED);
+        const MAX_SPEED = PHYSICS.CLAMPS.MAX_SPEED;
+        this._pos.x += MathUtility.clamp(this._velocity.x, -MAX_SPEED, MAX_SPEED);
+        this._pos.y += MathUtility.clamp(this._velocity.y, -MAX_SPEED, MAX_SPEED);
 
-        this._vector.x *= PHYSICS.FORCES.DAMPING;
-        this._vector.y *= PHYSICS.FORCES.DAMPING;
+        this._velocity.x *= PHYSICS.FORCES.DAMPING;
+        this._velocity.y *= PHYSICS.FORCES.DAMPING;
     }
 
     draw(ctx: CanvasRenderingContext2D) {
@@ -121,7 +106,7 @@ export class Vertex {
         const boxHeight = massFontSize + this._TEXT_BOX.PADDING_HEIGHT;
 
         // Draw background box
-        ctx.fillStyle = this._labelColour || "grey";
+        ctx.fillStyle = this.labelColour || "grey";
         // Drawn where the box midpoint is the position vector
         ctx.fillRect(this._pos.x - boxWidth / 2, this._pos.y - boxHeight / 2, boxWidth, boxHeight);
 

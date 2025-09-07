@@ -32,7 +32,7 @@ export class VertexUtility {
      */
     static getNeighbours(vertex: Vertex): Set<Vertex> {
         let neighbours = new Set<Vertex>();
-        for (const edge of vertex.neighbours) {
+        for (const edge of vertex.connectedEdges) {
             neighbours.add(edge.targetRef);
             neighbours.add(edge.sourceRef);
         }
@@ -44,7 +44,7 @@ export class VertexUtility {
      */
     static getOriginalMass(vertex: Vertex) {
         // Made into function incase I add more factors for mass
-        return vertex.neighbours.length;
+        return vertex.connectedEdges.length;
     }
 
     /**

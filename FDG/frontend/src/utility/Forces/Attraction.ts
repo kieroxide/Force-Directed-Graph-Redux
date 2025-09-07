@@ -13,8 +13,8 @@ export class Attraction {
             const dx = canvasCenter.x - origin.pos.x;
             const dy = canvasCenter.y - origin.pos.y;
 
-            origin.vector.x += dx * PHYSICS.FORCES.CENTRAL_SPRING;
-            origin.vector.y += dy * PHYSICS.FORCES.CENTRAL_SPRING;
+            origin.velocity.x += dx * PHYSICS.FORCES.CENTRAL_SPRING;
+            origin.velocity.y += dy * PHYSICS.FORCES.CENTRAL_SPRING;
         });
     }
 
@@ -49,12 +49,12 @@ export class Attraction {
 
             // Pull two vertex's together
             if (!vertexA.selected) {
-                vertexA.vector.x += (force / VertexUtility.getOriginalMass(vertexA)) * normX;
-                vertexA.vector.y += (force / VertexUtility.getOriginalMass(vertexA)) * normY;
+                vertexA.velocity.x += (force / VertexUtility.getOriginalMass(vertexA)) * normX;
+                vertexA.velocity.y += (force / VertexUtility.getOriginalMass(vertexA)) * normY;
             }
             if (!vertexB.selected) {
-                vertexB.vector.x -= (force / VertexUtility.getOriginalMass(vertexB)) * normX;
-                vertexB.vector.y -= (force / VertexUtility.getOriginalMass(vertexB)) * normY;
+                vertexB.velocity.x -= (force / VertexUtility.getOriginalMass(vertexB)) * normX;
+                vertexB.velocity.y -= (force / VertexUtility.getOriginalMass(vertexB)) * normY;
             }
         }
     }

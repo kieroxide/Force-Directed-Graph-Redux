@@ -33,12 +33,12 @@ export class Repulsion {
 
                 // Apply equal and opposite forces
                 if (!vertexA.selected) {
-                    vertexA.vector.x -= unitX * (force / VertexUtility.getOriginalMass(vertexA));
-                    vertexA.vector.y -= unitY * (force / VertexUtility.getOriginalMass(vertexA));
+                    vertexA.velocity.x -= unitX * (force / VertexUtility.getOriginalMass(vertexA));
+                    vertexA.velocity.y -= unitY * (force / VertexUtility.getOriginalMass(vertexA));
                 }
                 if (!vertexB.selected) {
-                    vertexB.vector.x += unitX * (force / VertexUtility.getOriginalMass(vertexB));
-                    vertexB.vector.y += unitY * (force / VertexUtility.getOriginalMass(vertexB));
+                    vertexB.velocity.x += unitX * (force / VertexUtility.getOriginalMass(vertexB));
+                    vertexB.velocity.y += unitY * (force / VertexUtility.getOriginalMass(vertexB));
                 }
             }
         }

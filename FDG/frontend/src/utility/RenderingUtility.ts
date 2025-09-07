@@ -10,7 +10,7 @@ export class RenderingUtility {
     
         ctx.save(); // save and restore to avoid transforms stacking
         camera.applyTransform(ctx);
-        graphManager.getGraph().draw();
+        graphManager.graph.draw();
         ctx.restore();
     }
 }

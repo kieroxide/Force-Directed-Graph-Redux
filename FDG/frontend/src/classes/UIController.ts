@@ -11,7 +11,7 @@ export class UIController {
         depthSlider?: HTMLInputElement;
         depthValue?: HTMLSpanElement;
         relationLimit?: HTMLInputElement;
-        entityLimitValue?: HTMLSpanElement;
+        relationLimitValue?: HTMLSpanElement;
         graphStats?: HTMLElement;
     };
 
@@ -35,8 +35,8 @@ export class UIController {
             appendMode: document.getElementById("append-mode") as HTMLInputElement,
             depthSlider: document.getElementById("depth-slider") as HTMLInputElement,
             depthValue: document.getElementById("depth-value") as HTMLSpanElement,
-            entityLimit: document.getElementById("relation-limit") as HTMLInputElement,
-            entityLimitValue: document.getElementById("relation-limit-value") as HTMLSpanElement,
+            relationLimit: document.getElementById("relation-limit") as HTMLInputElement,
+            relationLimitValue: document.getElementById("relation-limit-value") as HTMLSpanElement,
             graphStats: document.getElementById("graph-stats") as HTMLElement,
         };
     }
@@ -107,8 +107,8 @@ export class UIController {
     }
 
     private updateEntityLimitDisplay() {
-        if (this._elements.relationLimit && this._elements.entityLimitValue) {
-            this._elements.entityLimitValue.textContent = this._elements.relationLimit.value;
+        if (this._elements.relationLimit && this._elements.relationLimitValue) {
+            this._elements.relationLimitValue.textContent = this._elements.relationLimit.value;
         }
     }
 

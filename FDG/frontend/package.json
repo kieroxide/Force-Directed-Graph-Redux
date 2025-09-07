@@ -1,0 +1,21 @@
+{
+  "name": "fdg",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "start:backend": "cd ../backend && python WikiGraphServer.py",
+    "start:both": "concurrently \"npm run start:backend\" \"npm run dev\""
+  },
+  "devDependencies": {
+    "typescript": "~5.8.3",
+    "vite": "^7.1.2",
+    "concurrently": "^7.6.0"
+  },
+  "dependencies": {
+    "d3": "^7.9.0",
+    "d3-quadtree": "^3.0.1",
+    "gl-matrix": "^3.4.4"
+  }
+}

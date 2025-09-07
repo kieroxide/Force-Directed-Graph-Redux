@@ -4,8 +4,8 @@ export class Camera {
     private _pos: Vec;
     private _zoom: number;
 
-    private static readonly MOUSE_SPEED_FACTOR: 1;
-    private static readonly ZOOM_SCALE_FACTOR: 1.1;
+    private static readonly MOUSE_SPEED_FACTOR = 1;
+    private static readonly ZOOM_SCALE_FACTOR = 1.1;
 
     constructor() {
         this._pos = new Vec(0, 0);

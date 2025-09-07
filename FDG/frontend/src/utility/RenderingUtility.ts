@@ -2,7 +2,7 @@ import type { Camera } from "../classes/Camera";
 import type { GraphManager } from "../classes/GraphManager";
 
 export class RenderingUtility {
-    private static readonly BACKGROUND_COLOR: "#292929ff";
+    private static readonly BACKGROUND_COLOR = "#3a3a3aff";
 
     static render(
         ctx: CanvasRenderingContext2D,

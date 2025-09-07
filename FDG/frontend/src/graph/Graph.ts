@@ -7,7 +7,7 @@ import { GeometryUtility } from "../utility/GeometryUtility";
 import { CanvasUtility } from "../utility/CanvasUtility";
 
 export class Graph {
-    private static readonly INITIAL_RADIUS: 100;
+    private static readonly INITIAL_RADIUS = 100;
     
     private readonly _vertexColours = new Map<string, string>();
     private readonly _edgeColours = new Map<string, string>();

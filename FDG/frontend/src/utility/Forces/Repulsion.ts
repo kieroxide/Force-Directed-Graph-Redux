@@ -2,7 +2,7 @@ import { Vertex } from "../../graph/Vertex";
 import { VertexUtility } from "../VertexUtility";
 
 export class Repulsion {
-    private static readonly STRENGTH: 1000;
+    private static readonly STRENGTH = 1000;
 
     static repulsion(
         ctx: CanvasRenderingContext2D,

@@ -1,13 +1,13 @@
 import { Vec } from "../graph/Vec";
 
 export class CanvasUtility {
-    private static readonly COLOURS: {
-        readonly HUE_MIN: 0,
-        readonly HUE_MAX: 359,
-        readonly SATURATION_MIN: 40,
-        readonly SATURATION_MAX: 50,
-        readonly LIGHTNESS_MIN: 40,
-        readonly LIGHTNESS_MAX: 60,
+    private static readonly COLOURS = {
+        HUE_MIN: 0,
+        HUE_MAX: 359,
+        SATURATION_MIN: 40,
+        SATURATION_MAX: 50,
+        LIGHTNESS_MIN: 40,
+        LIGHTNESS_MAX: 60,
     }
     
     /**

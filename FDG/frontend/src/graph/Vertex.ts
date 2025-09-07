@@ -6,8 +6,8 @@ import { MathUtility } from "../utility/MathUtility";
 import { CanvasUtility } from "../utility/CanvasUtility";
 
 export class Vertex {
-    private static readonly MAX_SPEED: 20;
-    private static readonly DAMPING: 0.9;
+    private static readonly MAX_SPEED = 20;
+    private static readonly DAMPING = 0.9;
     // Euclidean Data
     private readonly _pos: Vec;
     get pos() {

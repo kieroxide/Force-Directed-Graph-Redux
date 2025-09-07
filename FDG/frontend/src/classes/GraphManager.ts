@@ -17,12 +17,12 @@ interface BackendResponse {
 }
 
 export class GraphManager {
-    private _graph: Graph;
+    private readonly _graph: Graph;
     get graph() {
         return this._graph;
     }
 
-    private _ctx: CanvasRenderingContext2D;
+    private readonly _ctx: CanvasRenderingContext2D;
     get ctx(): CanvasRenderingContext2D {
         return this._ctx;
     }

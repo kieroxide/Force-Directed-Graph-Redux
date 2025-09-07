@@ -1,6 +1,6 @@
 import { Vec } from "../graph/Vec";
 import { Vertex } from "../graph/Vertex";
-import { RENDERING } from "../../constants";
+import { VERTEX_FONT } from "../../constants/font";
 import { Camera } from "../classes/Camera";
 
 export class VertexUtility {
@@ -59,7 +59,8 @@ export class VertexUtility {
      * Calculates the height of the vertex's text box based on font size and mass
      */
     static getBoxHeight(vertex: Vertex) {
-        const massFontSize = RENDERING.FONT.SIZE + this.getOriginalMass(vertex) * RENDERING.FONT.MASS_WEIGHT;
+        const massFontSize =
+            VERTEX_FONT.SIZE + this.getOriginalMass(vertex) * VERTEX_FONT.MASS_WEIGHT;
 
         return massFontSize + vertex.TEXT_BOX.PADDING_HEIGHT / 2;
     }
@@ -70,7 +71,7 @@ export class VertexUtility {
     static getTextWidth(ctx: CanvasRenderingContext2D, vertex: Vertex, force: boolean = false) {
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.font = RENDERING.FONT.FULL;
+        ctx.font = VERTEX_FONT.FULL;
         if (force || vertex.textWidth === undefined) {
             vertex.textWidth = ctx.measureText(vertex.label).width;
         }

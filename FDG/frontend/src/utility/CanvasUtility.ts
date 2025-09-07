@@ -1,7 +1,25 @@
-import { RENDERING } from "../../constants";
 import { Vec } from "../graph/Vec";
 
 export class CanvasUtility {
+    private static readonly COLOURS: {
+        readonly HUE_MIN: 0,
+        readonly HUE_MAX: 359,
+        readonly SATURATION_MIN: 40,
+        readonly SATURATION_MAX: 50,
+        readonly LIGHTNESS_MIN: 40,
+        readonly LIGHTNESS_MAX: 60,
+    }
+    
+    /**
+     * Generates a random HSL color with pleasant saturation/lightness
+     */
+    static randomNiceColor() {
+        const hue = Math.floor(Math.random() * CanvasUtility.COLOURS.HUE_MAX) + CanvasUtility.COLOURS.HUE_MIN;
+        const saturation =
+            Math.floor(Math.random() * CanvasUtility.COLOURS.SATURATION_MAX) + CanvasUtility.COLOURS.SATURATION_MIN;
+        const lightness = Math.floor(Math.random() * CanvasUtility.COLOURS.LIGHTNESS_MAX) + CanvasUtility.COLOURS.LIGHTNESS_MIN;
+        return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+    }
     /**
      * Converts browser mouse coordinates to canvas coordinates
      */
@@ -29,14 +47,4 @@ export class CanvasUtility {
         return fontStr.replace(/(\d+)px/, `${newSizePx}px`);
     }
 
-    /**
-     * Generates a random HSL color with pleasant saturation/lightness
-     */
-    static randomNiceColor() {
-        const hue = Math.floor(Math.random() * RENDERING.COLOURS.HUE_MAX) + RENDERING.COLOURS.HUE_MIN;
-        const saturation =
-            Math.floor(Math.random() * RENDERING.COLOURS.SATURATION_MAX) + RENDERING.COLOURS.SATURATION_MIN;
-        const lightness = Math.floor(Math.random() * RENDERING.COLOURS.LIGHTNESS_MAX) + RENDERING.COLOURS.LIGHTNESS_MIN;
-        return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-    }
 }

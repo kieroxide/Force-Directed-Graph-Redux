@@ -5,13 +5,14 @@ import { Repulsion } from "../utility/Forces/Repulsion";
 import { Attraction } from "../utility/Forces/Attraction";
 import { GeometryUtility } from "../utility/GeometryUtility";
 import { CanvasUtility } from "../utility/CanvasUtility";
-import { RENDERING } from "../../constants";
 
 export class Graph {
-    private _vertexColours = new Map<string, string>();
-    private _edgeColours = new Map<string, string>();
-    private _ctx: CanvasRenderingContext2D;
-    private _canvas: HTMLCanvasElement;
+    private static readonly INITIAL_RADIUS: 100;
+    
+    private readonly _vertexColours = new Map<string, string>();
+    private readonly _edgeColours = new Map<string, string>();
+    private readonly _ctx: CanvasRenderingContext2D;
+    private readonly _canvas: HTMLCanvasElement;
 
     private _vertices: Record<string, Vertex>;
     get vertices() {
@@ -21,7 +22,7 @@ export class Graph {
     get edges() {
         return this._edges;
     }
-    private _component_origins: Set<Vertex>;
+    private _componentOrigins: Set<Vertex>;
 
     private _selectedVertex?: Vertex;
     get selectedVertex() {
@@ -39,7 +40,7 @@ export class Graph {
         this._canvas = canvas;
         this._vertices = {};
         this._edges = [];
-        this._component_origins = new Set();
+        this._componentOrigins = new Set();
     }
 
     /** Gets vertex by ID */
@@ -84,13 +85,13 @@ export class Graph {
     simulate() {
         Repulsion.repulsion(this._ctx, this.getVertices());
         Attraction.springAttraction(this._ctx, this._edges);
-        Attraction.centerAttraction(this._component_origins, this._canvas);
+        Attraction.centerAttraction(this._componentOrigins, this._canvas);
         this.update();
     }
 
     /** Sets vertex as selected and stops its movement */
     setSelectedVertex(vertex: Vertex) {
-        vertex.killVelocity()
+        vertex.killVelocity();
         vertex.selected = true;
         this._selectedVertex = vertex;
         this._lastClickedVertex = vertex;
@@ -131,7 +132,7 @@ export class Graph {
         const components = GeometryUtility.bfsComponents(vertices);
         const numComponents = [...components.keys()].length;
         components.forEach((component: Map<number, Vertex[]>) => {
-            this._component_origins.add(component.get(0)![0]);
+            this._componentOrigins.add(component.get(0)![0]);
         });
         // Gets comp origin positions to set them in a circular pattern around the center of canvas
         const comp_positions = GeometryUtility.circlePoints(
@@ -149,7 +150,7 @@ export class Graph {
 
             // Iterate over each bfs layer
             for (const [level, nodes] of layers.entries()) {
-                const radius = (level + 1) * RENDERING.INIT_SETTINGS.INITIAL_RADIUS; // add 1 to avoid * by 0
+                const radius = (level + 1) * Graph.INITIAL_RADIUS; // add 1 to avoid * by 0
 
                 const positions = GeometryUtility.circlePoints(centerX, centerY, radius, nodes.length);
 
@@ -217,7 +218,7 @@ export class Graph {
     clear() {
         this._vertices = {};
         this._edges = [];
-        this._component_origins = new Set();
+        this._componentOrigins = new Set();
         this._selectedVertex = undefined;
     }
 }

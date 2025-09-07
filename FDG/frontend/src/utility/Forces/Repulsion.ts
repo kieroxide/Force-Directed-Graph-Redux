@@ -1,12 +1,13 @@
 import { Vertex } from "../../graph/Vertex";
-import { PHYSICS } from "../../../constants";
 import { VertexUtility } from "../VertexUtility";
 
 export class Repulsion {
+    private static readonly STRENGTH: 1000;
+
     static repulsion(
         ctx: CanvasRenderingContext2D,
         vertices: Array<Vertex>,
-        strength: number = PHYSICS.FORCES.COLOUMBS_LAW,
+        strength: number = Repulsion.STRENGTH,
         exponent: number = 1
     ) {
         for (let i = 0; i < vertices.length; i++) {

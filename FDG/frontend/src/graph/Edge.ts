@@ -2,24 +2,24 @@ import type { Graph } from "./Graph.ts";
 import { Vertex } from "./Vertex.ts";
 
 export class Edge {
-    private _sourceId: string;
-    private _sourceRef: Vertex;
+    private readonly _sourceId: string;
+    private readonly _sourceRef: Vertex;
     get sourceRef() {
         return this._sourceRef;
     }
-    
-    private _targetId: string;
-    private _targetRef: Vertex;
+
+    private readonly _targetId: string;
+    private readonly _targetRef: Vertex;
     get targetRef() {
         return this._targetRef;
     }
 
-    private _type: string;
+    private readonly _type: string;
     get type() {
         return this._type;
     }
     lineColour: string;
-    
+
     constructor(sourceID: string, targetID: string, type: string, graph: Graph) {
         this._sourceId = sourceID;
         this._targetId = targetID;

@@ -2,7 +2,8 @@ import { GraphManager } from "./GraphManager";
 import { MathUtility } from "../utility/MathUtility";
 
 export class UIController {
-    private _graphManager: GraphManager;
+    private readonly _graphManager: GraphManager;
+
     private _elements: {
         fetchButton?: HTMLButtonElement;
         clearButton?: HTMLButtonElement;

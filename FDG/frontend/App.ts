@@ -6,8 +6,9 @@ import { CanvasUtility } from "./src/utility/CanvasUtility";
 import { RenderingUtility } from "./src/utility/RenderingUtility";
 
 class Application {
-    private canvas: HTMLCanvasElement;
-    private ctx: CanvasRenderingContext2D;
+    private readonly canvas: HTMLCanvasElement;
+    private readonly ctx: CanvasRenderingContext2D;
+    
     private camera: Camera;
     private graphManager: GraphManager;
     private uiController: UIController;

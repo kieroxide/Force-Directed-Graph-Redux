@@ -1,13 +1,15 @@
 import { Vec } from "./Vec";
 import { Edge } from "./Edge";
-import { RENDERING, PHYSICS } from "../../constants";
+import { VERTEX_FONT } from "../../constants/font";
 import { VertexUtility } from "../utility/VertexUtility";
 import { MathUtility } from "../utility/MathUtility";
 import { CanvasUtility } from "../utility/CanvasUtility";
 
 export class Vertex {
+    private static readonly MAX_SPEED: 20;
+    private static readonly DAMPING: 0.9;
     // Euclidean Data
-    private _pos: Vec;
+    private readonly _pos: Vec;
     get pos() {
         return this._pos;
     }
@@ -19,8 +21,8 @@ export class Vertex {
     killVelocity() {
         this._velocity = new Vec(0, 0);
     }
-    
-    private _connectedEdges: Array<Edge>;
+
+    private readonly _connectedEdges: Array<Edge>;
     get connectedEdges() {
         return this._connectedEdges;
     }
@@ -30,29 +32,29 @@ export class Vertex {
         this._selected = isSelected;
     }
     // Generic Data
-    private _name: string;
+    private readonly _name: string;
 
-    private _id: string;
+    private readonly _id: string;
     get id() {
         return this._id;
     }
 
-    private _type: string;
+    private readonly _type: string;
     get type() {
         return this._type;
     }
 
     // Visual Label
-    private _label: string;
+    private readonly _label: string;
     get label() {
         return this._label;
     }
 
-    private _TEXT_BOX: {
-        PADDING_WIDTH: number;
-        PADDING_HEIGHT: number;
-        BORDER_COLOR: string;
-        BORDER_WIDTH: number;
+    private readonly _TEXT_BOX: {
+        readonly PADDING_WIDTH: number;
+        readonly PADDING_HEIGHT: number;
+        readonly BORDER_COLOR: string;
+        readonly BORDER_WIDTH: number;
     };
     get TEXT_BOX() {
         return this._TEXT_BOX;
@@ -85,20 +87,21 @@ export class Vertex {
      * Updates position of the Vertex using the vector's values. Also applies damping
      */
     update() {
-        const MAX_SPEED = PHYSICS.CLAMPS.MAX_SPEED;
+        const MAX_SPEED = Vertex.MAX_SPEED;
         this._pos.x += MathUtility.clamp(this._velocity.x, -MAX_SPEED, MAX_SPEED);
         this._pos.y += MathUtility.clamp(this._velocity.y, -MAX_SPEED, MAX_SPEED);
 
-        this._velocity.x *= PHYSICS.FORCES.DAMPING;
-        this._velocity.y *= PHYSICS.FORCES.DAMPING;
+        this._velocity.x *= Vertex.DAMPING;
+        this._velocity.y *= Vertex.DAMPING;
     }
 
     draw(ctx: CanvasRenderingContext2D) {
         // Calibrates font
-        const massFontSize = RENDERING.FONT.SIZE + VertexUtility.getOriginalMass(this) * RENDERING.FONT.MASS_WEIGHT;
+        const massFontSize =
+            VERTEX_FONT.SIZE + VertexUtility.getOriginalMass(this) * VERTEX_FONT.MASS_WEIGHT;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.font = CanvasUtility.getFontString(RENDERING.FONT.FAMILY, massFontSize);
+        ctx.font = CanvasUtility.getFontString(VERTEX_FONT.FAMILY, massFontSize);
 
         // Calculates boxWidth and Height. Could be cached
         const width = VertexUtility.getTextWidth(ctx, this);

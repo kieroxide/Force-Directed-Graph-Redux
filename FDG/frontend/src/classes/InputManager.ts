@@ -5,10 +5,10 @@ import { VertexUtility } from "../utility/VertexUtility";
 import type { UIController } from "./UIController";
 
 export class InputManager {
-    private canvas: HTMLCanvasElement;
-    private camera: Camera;
-    private graphManager: GraphManager;
-    private uiController: UIController;
+    private readonly canvas: HTMLCanvasElement;
+    private readonly camera: Camera;
+    private readonly graphManager: GraphManager;
+    private readonly uiController: UIController;
     private isDraggingCamera = false;
 
     constructor(canvas: HTMLCanvasElement, camera: Camera, graphManager: GraphManager, uiController: UIController) {
@@ -79,8 +79,7 @@ export class InputManager {
         const mousePos = CanvasUtility.browserToCanvas(this.canvas, e);
         const worldMouse = this.camera.canvasToWorld(mousePos);
 
-        const factor = e.deltaY < 0 ? 1.1 : 1 / 1.1;
-        this.camera.zoomAt(mousePos, worldMouse, factor);
+        this.camera.zoomAt(mousePos, worldMouse, e.deltaY);
     }
 
     private handleMouseUp() {

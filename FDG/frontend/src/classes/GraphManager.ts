@@ -5,6 +5,7 @@ import { Vertex } from "../graph/Vertex";
 interface EntityData {
     label: string;
     type: string;
+    image: string;
 }
 
 interface BackendResponse {
@@ -68,7 +69,7 @@ export class GraphManager {
         // Add / merge vertices
         for (const [vertexId, entity] of Object.entries(data.entities)) {
             if (!this._graph.vertices[vertexId]) {
-                this._graph.vertices[vertexId] = new Vertex(vertexId, entity.label, entity.type);
+                this._graph.vertices[vertexId] = new Vertex(vertexId, entity.label, entity.type, entity.image, this._ctx);
             }
         }
 

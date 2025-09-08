@@ -22,7 +22,6 @@ export class Attraction {
     }
 
     static springAttraction(
-        ctx: CanvasRenderingContext2D,
         edges: Array<Edge>,
         strength: number = Attraction.SPRING
     ) {
@@ -45,7 +44,7 @@ export class Attraction {
             const normY = dy / distance;
 
             const width_offset =
-                VertexUtility.getBoxWidth(ctx, vertexA) / 2 + VertexUtility.getBoxWidth(ctx, vertexB) / 2;
+                vertexA._cachedDimensions!.boxWidth / 2 + vertexB._cachedDimensions!.boxWidth / 2;
 
             const displacement = distance - (Attraction.REST_LENGTH + width_offset);
             const force = strength * displacement;

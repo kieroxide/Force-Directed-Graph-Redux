@@ -5,7 +5,6 @@ export class Repulsion {
     private static readonly STRENGTH = 1000;
 
     static repulsion(
-        ctx: CanvasRenderingContext2D,
         vertices: Array<Vertex>,
         strength: number = Repulsion.STRENGTH,
         exponent: number = 1
@@ -23,7 +22,7 @@ export class Repulsion {
                 if (centerDistance === 0) continue; // Avoid division by zero
 
                 const width_offset =
-                    VertexUtility.getBoxWidth(ctx, vertexA) / 2 + VertexUtility.getBoxWidth(ctx, vertexB) / 2;
+                    vertexA._cachedDimensions!.boxWidth / 2 + vertexB._cachedDimensions!.boxWidth / 2;
 
                 const edgeDistance = Math.max(centerDistance - width_offset, 2);
                 const force = strength / edgeDistance ** exponent;

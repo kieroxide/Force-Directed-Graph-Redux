@@ -83,8 +83,8 @@ export class Graph {
 
     /** Runs physics simulation step (forces + movement) */
     simulate() {
-        Repulsion.repulsion(this._ctx, this.getVertices());
-        Attraction.springAttraction(this._ctx, this._edges);
+        Repulsion.repulsion(this.getVertices());
+        Attraction.springAttraction(this._edges);
         Attraction.centerAttraction(this._componentOrigins, this._canvas);
         this.update();
     }

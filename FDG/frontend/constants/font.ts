@@ -1,7 +1,7 @@
 export const VERTEX_FONT = {
     SIZE: 20,
-    FAMILY: "Arial",
-    MASS_WEIGHT: 2,
+    FAMILY: "sans-serif",
+    MASS_WEIGHT: 5,
     get FULL() {
         return `bold ${this.SIZE}px ${this.FAMILY}`;
     },

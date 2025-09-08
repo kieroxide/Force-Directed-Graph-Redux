@@ -119,55 +119,60 @@ class Wikidata_Client:
 
         return property_data
     
-    def get_entity_data(self, entity_ids, raw=False) -> dict:
+    def get_entity_data(self, entity_ids) -> dict:
         """Returns a dict of entity ids -> labels, type"""
-        entity_data = dict()
+        entities = dict()
         for batch in (self.batch_ids(entity_ids)):
             values_clause = " ".join(f"wd:{qid}" for qid in batch)
             query = f"""
-            SELECT ?entity ?entityLabel (SAMPLE(?type) AS ?mainType) (SAMPLE(?typeLabel) AS ?mainTypeLabel)
-            WHERE {{
-                VALUES ?entity {{ {values_clause} }}
-                OPTIONAL {{ 
-                    ?entity wdt:P31 ?type .
-                    ?type rdfs:label ?typeLabel .
-                    FILTER(LANG(?typeLabel) = "en")
+            SELECT ?entity ?entityLabel (SAMPLE(?type) AS ?mainType) (SAMPLE(?typeLabel) AS ?mainTypeLabel) (SAMPLE(?image) AS ?mainImage)
+                WHERE {{
+                    VALUES ?entity {{ {values_clause} }}
+                    OPTIONAL {{ 
+                        ?entity wdt:P31 ?type .
+                        ?type rdfs:label ?typeLabel .
+                        FILTER(LANG(?typeLabel) = "en")
+                    }}
+                    OPTIONAL {{
+                        ?entity wdt:P18 ?image .
+                    }}
+                    SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en,mul". }}
                 }}
-                SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en,mul". }}
-            }}
-            GROUP BY ?entity ?entityLabel
-            """
+            GROUP BY ?entity ?entityLabel"""
             results_raw = self.__execute_query(query)
-            if raw:
-                return results_raw
             
             results = results_raw["results"]["bindings"]
+            
             for result in results:
                 # Entity id and label gets
                 e_id = result["entity"]["value"].split("/")[-1]
 
+                # Entity Label
                 label: str = result.get("entityLabel", {}).get("value", e_id)
                 if "xml:lang" in label:
                     label = label["value"]
-                # Entity Type data
-                entityType: str = result.get("mainTypeLabel", {}).get("value", "Unknown")
-                entity_data[e_id] =  {"label": label.title(), "type": entityType.title()}
 
-        return entity_data
+                # Entity Type data
+                type: str = result.get("mainTypeLabel", {}).get("value", "Unknown")
+                # Entity image data
+                img = result.get("mainImage", {}).get("value", "") 
+                
+                entities[e_id] =  {"label": label.title(), "type": type.title(), "image": img}
+
+        return entities
             
-    def get_entity_relations(self, entity_ids: list[str], relation_limit: int = RELATION_LIMIT):
+    def get_entity_relations(self, entity_ids: list[str], relation_limit: int = RELATION_LIMIT, _filter=False):
         """Returns up to {limit} triples (source QID, property PID, target QID) 
         for a list of QIDs as a set"""
         relationships = set()
         useful_types_str = " ".join([f"wd:{qid}" for qid in USEFUL_ENTITY_TYPES])
-        
         for batch in self.batch_ids(entity_ids, 100):
             values_clause = " ".join([f"wd:{eid}" for eid in batch])
-            query = f"""
-                SELECT DISTINCT ?source ?property ?target WHERE {{
-                    VALUES ?source {{ {values_clause} }}
-                    VALUES ?targetType {{ { useful_types_str } }}
-                    ?source ?property ?target .
+            query = f"""SELECT DISTINCT ?source ?property ?target WHERE {{
+                    VALUES ?source {{ {values_clause} }}"""
+            if _filter:
+                query += "\n" + f"VALUES ?targetType {{ { useful_types_str } }}"
+            query += f"""?source ?property ?target .
                     ?target wdt:P31 ?targetType .
                     FILTER(STRSTARTS(STR(?target), "http://www.wikidata.org/entity/Q"))
                     FILTER(STRSTARTS(STR(?property), "http://www.wikidata.org/prop/direct/"))

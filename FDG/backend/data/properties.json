@@ -1,10 +1,19 @@
 {
-  "P22": "Father",
-  "P190": "Twinned Administrative Body",
-  "P40": "Child",
-  "P26": "Spouse",
-  "P19": "Place Of Birth",
-  "P25": "Mother",
+  "P5008": "On Focus List Of Wikimedia Project",
   "P1889": "Different From",
-  "P1343": "Described By Source"
+  "P1557": "Manifestation Of",
+  "P1382": "Partially Coincident With",
+  "P3113": "Does Not Have Part",
+  "P35": "Head Of State",
+  "P460": "Said To Be The Same As",
+  "P6": "Head Of Government",
+  "P17": "Country",
+  "P138": "Named After",
+  "P170": "Creator",
+  "P61": "Discoverer Or Inventor",
+  "P551": "Residence",
+  "P101": "Field Of Work",
+  "P1412": "Languages Spoken, Written Or Signed",
+  "P140": "Religion Or Worldview",
+  "P509": "Cause Of Death"
 }

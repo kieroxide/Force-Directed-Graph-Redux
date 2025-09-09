@@ -8,7 +8,7 @@ import { CanvasUtility } from "../utility/CanvasUtility";
 
 export class Graph {
     private static readonly INITIAL_RADIUS = 100;
-    
+
     private readonly _vertexColours = new Map<string, string>();
     private readonly _edgeColours = new Map<string, string>();
     private readonly _ctx: CanvasRenderingContext2D;
@@ -57,6 +57,16 @@ export class Graph {
         );
     }
 
+    /** Checks if edge already exists in opposite direction */
+    private biDirectional(sourceId: string, targetId: string): Edge | undefined {
+        for (const edge of this.edges) {
+            if (edge.targetRef.id === sourceId && edge.sourceRef.id === targetId) {
+                return edge;
+            }
+        }
+        return undefined;
+    }
+
     /** Adds edge between vertices if it doesn't already exist */
     addEdge(sourceId: string, targetId: string, property: string): boolean {
         if (this.edgeExists(sourceId, targetId, property)) {
@@ -72,7 +82,16 @@ export class Graph {
             return false;
         }
 
-        const edge = new Edge(sourceId, targetId, property, this);
+        // Checks and deals with bidirectional arrows
+        const oppositeDirectionalEdge = this.biDirectional(sourceId, targetId);
+
+        let isBiDirectional = false;
+        if (oppositeDirectionalEdge) {
+            oppositeDirectionalEdge.isBiDirectional = true;
+            isBiDirectional = true;
+        }
+
+        const edge = new Edge(sourceId, targetId, property, this, isBiDirectional);
 
         sourceVertex.connectedEdges.push(edge);
         targetVertex.connectedEdges.push(edge);

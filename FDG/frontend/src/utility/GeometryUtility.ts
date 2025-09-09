@@ -3,6 +3,25 @@ import { Vertex } from "../graph/Vertex";
 import { VertexUtility } from "./VertexUtility";
 
 export class GeometryUtility {
+    // Gets intersect from source point to vertex's boundary
+    static getBoxIntersect(sourcePos: Vec, target: Vertex) {
+        const halfWidth = target._cachedDimensions!.boxWidth / 2;
+        const halfHeight = target._cachedDimensions!.boxHeight / 2;
+
+        const dx = target.pos.x - sourcePos.x;
+        const dy = target.pos.y - sourcePos.y;
+
+        // avoid division by zero
+        if (dx === 0 && dy === 0) return new Vec(target.pos.x, target.pos.y);
+
+        // Scale factors along each axis
+        const scaleX = halfWidth / Math.abs(dx);
+        const scaleY = halfHeight / Math.abs(dy);
+
+        const scale = Math.min(scaleX, scaleY);
+
+        return new Vec(target.pos.x - dx * scale, target.pos.y - dy * scale);
+    }
     /**
      * Creates evenly spaced points around a circle
      */

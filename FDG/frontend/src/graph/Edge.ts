@@ -1,12 +1,14 @@
 import type { Graph } from "./Graph.ts";
-import { Vertex } from "./Vertex.ts";
+import type { Vertex } from "./Vertex.ts";
 import { Vec } from "./Vec.ts";
+import { RenderingUtility } from "../utility/RenderingUtility.ts";
+import { GeometryUtility } from "../utility/GeometryUtility.ts";
 
 export class Edge {
     private static readonly LINE_SIZE = 4;
     private static readonly ARROW_HEAD_SIZE = 30;
     private static readonly ARROW_HEAD_ANGLE = Math.PI / 6;
-    private static readonly BIDIRECTIONAL_OFFSET = 20;
+    private static readonly BIDIRECTIONAL_OFFSET_SCALE = 20;
 
     private readonly _sourceId: string;
     private readonly _sourceRef: Vertex;
@@ -52,32 +54,13 @@ export class Edge {
         this.drawArrow(ctx, this._sourceRef, this._targetRef);
     }
 
-    getBoxIntersect(sourcePos: Vec, target: Vertex) {
-        const halfWidth = target._cachedDimensions!.boxWidth / 2;
-        const halfHeight = target._cachedDimensions!.boxHeight / 2;
-
-        const dx = target.pos.x - sourcePos.x;
-        const dy = target.pos.y - sourcePos.y;
-
-        // avoid division by zero
-        if (dx === 0 && dy === 0) return new Vec(target.pos.x, target.pos.y);
-
-        // Scale factors along each axis
-        const scaleX = halfWidth / Math.abs(dx);
-        const scaleY = halfHeight / Math.abs(dy);
-
-        const scale = Math.min(scaleX, scaleY);
-
-        return new Vec(target.pos.x - dx * scale, target.pos.y - dy * scale);
-    }
-
     /**
      * Draw an arrow from source to target vertex
      */
     drawArrow(ctx: CanvasRenderingContext2D, sourceVertex: Vertex, targetVertex: Vertex) {
         const source = sourceVertex.pos;
         // We draw to the box edge so arrow is not hidden
-        const intersectTarget = this.getBoxIntersect(source, targetVertex);
+        const intersectTarget = GeometryUtility.getBoxIntersect(source, targetVertex);
 
         // Calculate direction vector to keep the arrow in correct orientation
         const dx = intersectTarget.x - source.x;
@@ -85,9 +68,18 @@ export class Edge {
         const angle = Math.atan2(dy, dx);
 
         // Calculate offset for bidirectional arrows so they dont overlap
-        const offset = this.calculateBidirectionalOffset(dx, dy);
+        let offset = new Vec(0, 0);
+        if (this._isBidirectional) {
+            offset = RenderingUtility.calculateBidirectionalOffset(dx, dy, Edge.BIDIRECTIONAL_OFFSET_SCALE);
+        }
 
-        const positions = this.calculateArrowPositions(source, intersectTarget, angle, offset);
+        const positions = RenderingUtility.calculateArrowPositions(
+            source,
+            intersectTarget,
+            angle,
+            offset,
+            Edge.ARROW_HEAD_SIZE
+        );
 
         // Line
         ctx.beginPath();
@@ -96,58 +88,13 @@ export class Edge {
         ctx.stroke();
 
         // Arrowhead
-        this.drawArrowhead(ctx, positions.targetX, positions.targetY, angle);
-    }
-
-    /**
-     * Calculate offset for bidirectional arrows
-     */
-    private calculateBidirectionalOffset(dx: number, dy: number): Vec {
-        const offset = Edge.BIDIRECTIONAL_OFFSET;
-        if (!this._isBidirectional) return new Vec(0, 0);
-
-        const length = Math.sqrt(dx * dx + dy * dy);
-        if (length === 0) return new Vec(0, 0);
-
-        // Calculate perpendicular unit vector
-        const perpX = -dy / length;
-        const perpY = dx / length;
-
-        // Apply offset
-        return new Vec(perpX * offset, perpY * offset);
-    }
-
-    /**
-     * Calculate all arrow positions with offset applied
-     */
-    private calculateArrowPositions(source: Vec, target: Vec, angle: number, offset: Vec) {
-        // Move line endpoint back by headLength to leave room for arrowhead
-        const lineEndX = target.x - Edge.ARROW_HEAD_SIZE * Math.cos(angle);
-        const lineEndY = target.y - Edge.ARROW_HEAD_SIZE * Math.sin(angle);
-
-        // Apply offset to all points
-        return {
-            sourceX: source.x + offset.x,
-            sourceY: source.y + offset.y,
-            targetX: target.x + offset.x,
-            targetY: target.y + offset.y,
-            endX: lineEndX + offset.x,
-            endY: lineEndY + offset.y,
-        };
-    }
-
-    /**
-     * Draw the arrowhead at the specified position
-     */
-    private drawArrowhead(ctx: CanvasRenderingContext2D, x: number, y: number, angle: number) {
-        const headLength = Edge.ARROW_HEAD_SIZE;
-        const arrowAngle = Edge.ARROW_HEAD_ANGLE;
-
-        ctx.beginPath();
-        ctx.moveTo(x, y);
-        ctx.lineTo(x - headLength * Math.cos(angle + arrowAngle), y - headLength * Math.sin(angle + arrowAngle));
-        ctx.lineTo(x - headLength * Math.cos(angle - arrowAngle), y - headLength * Math.sin(angle - arrowAngle));
-        ctx.closePath();
-        ctx.fill();
+        RenderingUtility.drawArrowhead(
+            ctx,
+            positions.targetX,
+            positions.targetY,
+            angle,
+            Edge.ARROW_HEAD_SIZE,
+            Edge.ARROW_HEAD_ANGLE
+        );
     }
 }

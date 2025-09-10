@@ -50,11 +50,35 @@ export class Graph {
 
     /** Checks if edge already exists between two vertices */
     private edgeExists(sourceId: string, targetId: string, property: string): boolean {
-        return this._edges.some(
-            (edge) =>
-                (edge.sourceRef.id === sourceId && edge.targetRef.id === targetId && edge.type === property) ||
-                (edge.sourceRef.id === targetId && edge.targetRef.id === sourceId && edge.type === property)
-        );
+        for (const edge of this.edges) {
+            if (edge.sourceRef.id === sourceId && edge.targetRef.id === targetId) {
+                for (const type of edge.types) {
+                    if (property === type) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /** Checks if edge already exists between two vertices with different property*/
+    private edgeExistsDifferentProperty(sourceId: string, targetId: string, property: string): boolean {
+        for (const edge of this._edges) {
+            const sameEdge = edge.sourceRef.id === sourceId && edge.targetRef.id === targetId;
+            // Checks if the property is a new property
+            if (sameEdge) {
+                const types = edge.types;
+                for (const type of types) {
+                    if (type === property) {
+                        return false;
+                    }
+                }
+                edge.types.push(property);
+                return true;
+            }
+        }
+        return false;
     }
 
     /** Checks if edge already exists in opposite direction */
@@ -69,8 +93,8 @@ export class Graph {
 
     /** Adds edge between vertices if it doesn't already exist */
     addEdge(sourceId: string, targetId: string, property: string): boolean {
-        if (this.edgeExists(sourceId, targetId, property)) {
-            console.log(`Edge already exists: ${sourceId} -> ${targetId} (${property})`);
+        // Ignores edges that already exist with the same property
+        if (this.edgeExistsDifferentProperty(sourceId, targetId, property)) {
             return false;
         }
 
@@ -87,7 +111,7 @@ export class Graph {
 
         let isBiDirectional = false;
         if (oppositeDirectionalEdge) {
-            oppositeDirectionalEdge.isBiDirectional = true;
+            oppositeDirectionalEdge.isBidirectional = true;
             isBiDirectional = true;
         }
 
@@ -200,14 +224,14 @@ export class Graph {
     /** Assigns unique colors to edge types */
     initEdgeColour() {
         for (const edge of this._edges) {
-            if (this._edgeColours.has(edge.type)) {
-                edge.lineColour = this._edgeColours.get(edge.type)!;
+            if (this._edgeColours.has(edge.types[0])) {
+                edge.lineColour = this._edgeColours.get(edge.types[0])!;
             } else {
                 let colour: string;
                 do {
                     colour = CanvasUtility.randomNiceColor();
                 } while (new Set(this._vertexColours.values()).has(colour));
-                this._edgeColours.set(edge.type, colour);
+                this._edgeColours.set(edge.types[0], colour);
                 edge.lineColour = colour;
             }
         }

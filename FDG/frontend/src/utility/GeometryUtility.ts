@@ -3,7 +3,25 @@ import { Vertex } from "../graph/Vertex";
 import { VertexUtility } from "./VertexUtility";
 
 export class GeometryUtility {
-    // Gets intersect from source point to vertex's boundary
+    /**
+     * Returns angle of a line from the x-axis
+     */
+    static lineAngle(source: Vec, target: Vec): number {
+        const dx = target.x - source.x;
+        const dy = target.y - source.y;
+        return Math.atan2(dy, dx);
+    }
+    /**
+     *  Returns midpoint between two points
+     */
+    static getMidpoint(pointA: Vec, pointB: Vec) {
+        const xMid = (pointA.x + pointB.x) / 2;
+        const yMid = (pointA.y + pointB.y) / 2;
+        return new Vec(xMid, yMid);
+    }
+    /**
+     *  Gets intersect from source point to vertex's boundary
+     **/
     static getBoxIntersect(sourcePos: Vec, target: Vertex) {
         const halfWidth = target._cachedDimensions!.boxWidth / 2;
         const halfHeight = target._cachedDimensions!.boxHeight / 2;

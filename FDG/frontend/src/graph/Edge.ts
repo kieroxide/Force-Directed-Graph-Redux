@@ -23,13 +23,16 @@ export class Edge {
     }
 
     private _isBidirectional: boolean;
-    set isBiDirectional(isBiDirectional: boolean) {
-        this._isBidirectional = isBiDirectional;
+    set isBidirectional(isBidirectional: boolean) {
+        this._isBidirectional = isBidirectional;
     }
 
-    private readonly _type: string;
-    get type() {
-        return this._type;
+    private _types: string[];
+    get types() {
+        return this._types;
+    }
+    set types(type: string[]) {
+        this._types = type;
     }
     lineColour: string;
 
@@ -37,7 +40,7 @@ export class Edge {
         this._sourceId = sourceID;
         this._targetId = targetID;
         this._isBidirectional = isBiDirectional;
-        this._type = type;
+        this._types = [type];
         this.lineColour = "#000000"; // Default colour
         this._sourceRef = graph.getVertex(sourceID);
         this._targetRef = graph.getVertex(targetID);

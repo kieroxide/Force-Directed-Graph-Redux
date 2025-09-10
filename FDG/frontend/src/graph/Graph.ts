@@ -93,7 +93,12 @@ export class Graph {
 
     /** Adds edge between vertices if it doesn't already exist */
     addEdge(sourceId: string, targetId: string, property: string): boolean {
-        // Ignores edges that already exist with the same property
+        // First check if exact same edge exists (same source, target, property)
+        if (this.edgeExists(sourceId, targetId, property)) {
+            return false; // Skip if exact duplicate
+        }
+
+        // Appends extra property to same edge if exists
         if (this.edgeExistsDifferentProperty(sourceId, targetId, property)) {
             return false;
         }

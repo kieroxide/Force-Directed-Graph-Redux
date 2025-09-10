@@ -1,7 +1,6 @@
 import type { Camera } from "../classes/Camera";
 import type { GraphManager } from "../classes/GraphManager";
 import { Vec } from "../graph/Vec";
-import { Edge } from "../graph/Edge";
 
 export class RenderingUtility {
     private static readonly BACKGROUND_COLOR = "#2b2b2bff";

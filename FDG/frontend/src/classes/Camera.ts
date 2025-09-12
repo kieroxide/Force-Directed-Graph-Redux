@@ -1,15 +1,24 @@
 import { Vec } from "../graph/Vec";
+import { Vertex } from "../graph/Vertex";
 
 export class Camera {
-    private _pos: Vec;
-    private _zoom: number;
-
     private static readonly MOUSE_SPEED_FACTOR = 1;
     private static readonly ZOOM_SCALE_FACTOR = 1.1;
+
+    private _pos: Vec;
+    private _zoom: number;
+    private _cameraLockedVertex: Vertex | null;
 
     constructor() {
         this._pos = new Vec(0, 0);
         this._zoom = 1;
+        this._cameraLockedVertex = null;
+    }
+    set cameraLockedVertex(vertex: Vertex | null) {
+        this._cameraLockedVertex = vertex;
+    }
+    get cameraLockedVertex() {
+        return this._cameraLockedVertex;
     }
 
     /**
@@ -24,7 +33,15 @@ export class Camera {
     /**
      * Apply camera transform to the canvas context.
      */
-    applyTransform(ctx: CanvasRenderingContext2D) {
+    applyTransform(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
+        if (this._cameraLockedVertex) {
+            const vertexPosition = this._cameraLockedVertex.pos;
+            const vertexCamPosition = new Vec(
+                canvas.width / 2 - vertexPosition.x * this._zoom,
+                canvas.height / 2 - vertexPosition.y * this._zoom
+            );
+            this._pos = vertexCamPosition;
+        }
         ctx.translate(this._pos.x, this._pos.y);
         ctx.scale(this._zoom, this._zoom);
     }

@@ -135,23 +135,6 @@ export class GraphManager {
     }
 
     /**
-     * Sets the selected vertex
-     */
-    setSelectedVertex(vertexId: string): void {
-        const vertex = this._graph.getVertex(vertexId);
-        if (vertex) {
-            this._graph.setSelectedVertex(vertex);
-        }
-    }
-
-    /**
-     * Resets vertex selection
-     */
-    resetSelection(): void {
-        this._graph.resetSelectedVertex();
-    }
-
-    /**
      * Gets all vertices in the graph
      */
     getVertices(): Record<string, any> {

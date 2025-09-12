@@ -16,8 +16,6 @@ export class VertexUtility {
     private static readonly TEXT_LINE_SPACING = 15;
     private static readonly TEXT_ONLY_BOX_EXTRA_HEIGHT = 80;
 
-    
-
     /**
      * Checks if a point is within the vertex's boundary box
      */
@@ -60,6 +58,9 @@ export class VertexUtility {
      * Calculates the vertex's mass based on number of connections
      */
     static getOriginalMass(vertex: Vertex) {
+        if (vertex.connectedEdges.length === 0) {
+            return 1;
+        }
         return vertex.connectedEdges.length;
     }
 
@@ -68,7 +69,7 @@ export class VertexUtility {
      */
     static drawTextVertex(ctx: CanvasRenderingContext2D, vertex: Vertex) {
         const cache = vertex._cachedDimensions!;
-       
+
         const lineHeight = cache.fontSize + VertexUtility.TEXT_LINE_SPACING;
         const labelY = vertex.pos.y - lineHeight / 2;
         const typeY = vertex.pos.y + lineHeight / 2;

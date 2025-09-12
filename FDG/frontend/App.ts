@@ -9,10 +9,10 @@ class Application {
     private readonly canvas: HTMLCanvasElement;
     private readonly ctx: CanvasRenderingContext2D;
     
-    private camera: Camera;
-    private graphManager: GraphManager;
-    private uiController: UIController;
-    private inputManager: InputManager;
+    private camera!: Camera;
+    private graphManager!: GraphManager;
+    private uiController!: UIController;
+    private inputManager!: InputManager;
 
     constructor() {
         this.canvas = document.getElementById("graphCanvas") as HTMLCanvasElement;

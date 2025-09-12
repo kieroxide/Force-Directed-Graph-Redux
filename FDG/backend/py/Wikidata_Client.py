@@ -111,9 +111,14 @@ class Wikidata_Client:
             """
 
             results_raw = self.__execute_query(query)
-            results = results_raw["results"]["bindings"]
+            if not results_raw:
+                continue
+
+            results = results_raw.get("results", {}).get("bindings",{})
             for result in results:
-                pid = result["property"]["value"].split("/")[-1]
+                pid = result.get("property", {}).get("value", "").split("/")[-1]
+                if pid == [""]:
+                    continue
                 label: str = result.get("propertyLabel", {}).get("value", pid)
                 property_data[pid] = label.title()
 
@@ -139,14 +144,17 @@ class Wikidata_Client:
                     SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en,mul". }}
                 }}
             GROUP BY ?entity ?entityLabel"""
+
             results_raw = self.__execute_query(query)
-            
-            results = results_raw["results"]["bindings"]
-            
+            if not results_raw:
+                continue
+
+            results = results_raw.get("results", {}).get("bindings",{})
             for result in results:
                 # Entity id and label gets
-                e_id = result["entity"]["value"].split("/")[-1]
-
+                e_id = result.get("entity", {}).get("value", "").split("/")[-1]
+                if e_id == [""]:
+                    continue
                 # Entity Label
                 label: str = result.get("entityLabel", {}).get("value", e_id)
                 if "xml:lang" in label:
@@ -154,6 +162,7 @@ class Wikidata_Client:
 
                 # Entity Type data
                 type: str = result.get("mainTypeLabel", {}).get("value", "Unknown")
+                
                 # Entity image data
                 img = result.get("mainImage", {}).get("value", "") 
                 
@@ -180,11 +189,11 @@ class Wikidata_Client:
                 LIMIT {relation_limit}
             """
 
-            data = self.__execute_query(query)
-            if not data:
-                return relationships
+            results_raw = self.__execute_query(query)
+            if not results_raw:
+                continue
 
-            for result in data["results"]["bindings"]:
+            for result in results_raw.get("results", {}).get("bindings",{}):
                 source_id = result["source"]["value"].split("/").pop()
                 property_id = result["property"]["value"].split("/").pop()
                 target_id = result["target"]["value"].split("/").pop()

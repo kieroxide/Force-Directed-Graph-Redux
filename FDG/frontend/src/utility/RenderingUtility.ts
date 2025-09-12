@@ -16,7 +16,7 @@ export class RenderingUtility {
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         ctx.save(); // save and restore to avoid transforms stacking
-        camera.applyTransform(ctx);
+        camera.applyTransform(ctx, canvas);
         graphManager.graph.draw();
         ctx.restore();
     }

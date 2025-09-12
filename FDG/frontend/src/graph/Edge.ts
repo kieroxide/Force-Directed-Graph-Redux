@@ -4,6 +4,7 @@ import { Vec } from "./Vec.ts";
 import { RenderingUtility } from "../utility/RenderingUtility.ts";
 import { GeometryUtility } from "../utility/GeometryUtility.ts";
 import { VERTEX_FONT } from "../../constants/font.ts";
+import { VertexUtility } from "../utility/VertexUtility.ts";
 
 export class Edge {
     private static readonly LINE_SIZE = 4;
@@ -73,6 +74,10 @@ export class Edge {
         const source = this.sourceRef.pos;
         const target = this.targetRef.pos;
 
+        // Ensures vertex box dimensions are correct in cache
+        VertexUtility.ensureValidCache(ctx, this.sourceRef);
+        VertexUtility.ensureValidCache(ctx, this.targetRef);
+
         // Gets the positions minus the box to avoid label being hidden by drawn box
         const sourceIntersect = GeometryUtility.getBoxIntersect(source, this.sourceRef);
         const targetIntersect = GeometryUtility.getBoxIntersect(target, this.targetRef);
@@ -93,7 +98,7 @@ export class Edge {
         if (angle > Math.PI / 2 || angle < -Math.PI / 2) {
             angle += Math.PI;
         }
-        
+
         // Builds the label as multiple properties can be assigned to an edge
         let typeLabel = "";
         for (let i = 0; i < this._types.length; i++) {

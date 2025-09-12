@@ -165,8 +165,15 @@ export class Graph {
                 numOfOldVertices++;
             }
         }
+
+        let midpoint;
+        if (numOfOldVertices === 0) {
+            midpoint = new Vec(this._canvas.width / 2, this._canvas.height / 2);
+        } else {
+            midpoint = Vec.divideXY(midpointsum, numOfOldVertices);
+        }
+
         let new_vertices_vals = Object.values(new_vertices);
-        let midpoint = Vec.divideXY(midpointsum, numOfOldVertices);
         // Circles the new Vertices around the midpoint
         let positions = GeometryUtility.circlePoints(midpoint.x, midpoint.y, 200, new_vertices_vals.length);
         for (let i = 0; i < new_vertices_vals.length; i++) {
@@ -268,5 +275,6 @@ export class Graph {
         this._edges = [];
         this._componentOrigins = new Set();
         this._selectedVertex = undefined;
+        this._lastClickedVertex = undefined;
     }
 }

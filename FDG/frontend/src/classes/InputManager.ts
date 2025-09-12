@@ -3,14 +3,17 @@ import { GraphManager } from "../classes/GraphManager";
 import { CanvasUtility } from "../utility/CanvasUtility";
 import { VertexUtility } from "../utility/VertexUtility";
 import type { UIController } from "./UIController";
+import type { Vertex } from "../graph/Vertex";
 
 export class InputManager {
     private readonly canvas: HTMLCanvasElement;
     private readonly camera: Camera;
     private readonly graphManager: GraphManager;
     private readonly uiController: UIController;
+    
     private isDraggingCamera = false;
     private isExpandingVertex = false;
+    private clickTimer: number | null = null;
 
     constructor(canvas: HTMLCanvasElement, camera: Camera, graphManager: GraphManager, uiController: UIController) {
         this.canvas = canvas;
@@ -49,26 +52,46 @@ export class InputManager {
     private handleMouseDown(e: MouseEvent) {
         const mousePos = CanvasUtility.browserToCanvas(this.canvas, e);
         const graph = this.graphManager.graph;
+        let hitVertex: Vertex | null = null;
 
-        // Check vertices for selection
+        // Check vertices for being clicked on
         for (const vertex of Object.values(graph.vertices)) {
             if (VertexUtility.pointInBoundary(mousePos, this.graphManager.ctx, this.camera, vertex)) {
-                graph.setSelectedVertex(vertex);
-                return;
+                hitVertex = vertex;
             }
         }
 
         // Start camera drag if no vertex selected
-        this.isDraggingCamera = true;
+        if (hitVertex === null) {
+            this.isDraggingCamera = true;
+            return;
+        }
+
+        // Both single and double click set that as main vertex
+        this.graphManager.graph.setSelectedVertex(hitVertex!);
+
+        if (this.clickTimer) {
+            clearTimeout(this.clickTimer);
+            this.clickTimer = null;
+            this.camera.cameraLockedVertex = hitVertex!;
+        } else {
+            this.clickTimer = setTimeout(() => {
+                this.clickTimer = null;
+            }, 250);
+        }
     }
 
     private handleMouseMove(e: MouseEvent) {
         if (this.isDraggingCamera) {
+            this.camera.cameraLockedVertex = null; // Allows to break out of camera lock
             this.camera.pan(e.movementX, e.movementY);
         } else {
             // Handle vertex dragging
             const graph = this.graphManager.graph;
             if (graph.selectedVertex) {
+                if (this.camera.cameraLockedVertex === graph.selectedVertex) {
+                    return;
+                }
                 const mousePos = CanvasUtility.browserToCanvas(this.canvas, e);
                 const worldPos = this.camera.canvasToWorld(mousePos);
                 // Update vertex position

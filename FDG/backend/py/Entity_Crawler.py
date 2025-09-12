@@ -5,8 +5,8 @@ class Entity_Crawler:
     """Crawls Wikidata starting from a root entity to collect entity-to-entity relations."""
     def __init__(self, data_handler: Data_Handler):
         self.wiki_client = Wikidata_Client()
-        self.entity_ids = {id for id in data_handler.cached_entities.keys()}
-        self.property_ids = {id for id in data_handler.cached_properties.keys()}
+        self.entity_ids = set()
+        self.property_ids = set()
         self.relations = set()
 
     def __str__(self):

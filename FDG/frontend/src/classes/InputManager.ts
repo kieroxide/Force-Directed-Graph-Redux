@@ -10,6 +10,7 @@ export class InputManager {
     private readonly graphManager: GraphManager;
     private readonly uiController: UIController;
     private isDraggingCamera = false;
+    private isExpandingVertex = false;
 
     constructor(canvas: HTMLCanvasElement, camera: Camera, graphManager: GraphManager, uiController: UIController) {
         this.canvas = canvas;
@@ -30,15 +31,18 @@ export class InputManager {
 
     private async handleRightClick(e: MouseEvent) {
         e.preventDefault();
-        const graph = this.graphManager.graph;
+        if (this.isExpandingVertex) return;
 
+        const graph = this.graphManager.graph;
         if (graph.lastClickedVertex) {
             const settings = this.uiController.getSettings();
+            this.isExpandingVertex = true;
             await this.graphManager.expandFromVertex(
                 graph.lastClickedVertex.id,
                 settings.depth,
                 settings.relationLimit
             );
+            this.isExpandingVertex = false;
         }
     }
 

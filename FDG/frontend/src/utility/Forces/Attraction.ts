@@ -6,7 +6,7 @@ import { VertexUtility } from "../VertexUtility";
 export class Attraction {
     private static readonly SPRING = 0.025;
     private static readonly CENTRAL_SPRING = 0.075;
-    private static readonly REST_LENGTH = 50;
+    private static readonly REST_LENGTH = 100;
 
     static centerAttraction(origins: Set<Vertex>, canvas: HTMLCanvasElement) {
         const canvasCenter = new Vec(canvas.width / 2, canvas.height / 2);

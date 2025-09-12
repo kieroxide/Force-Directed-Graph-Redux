@@ -25,6 +25,7 @@ export class Repulsion {
                     vertexA._cachedDimensions!.boxWidth / 2 + vertexB._cachedDimensions!.boxWidth / 2;
 
                 const edgeDistance = Math.max(centerDistance - width_offset, 2);
+                if (edgeDistance === 0) continue
                 const force = strength / edgeDistance ** exponent;
 
                 // Unit vector (direction)

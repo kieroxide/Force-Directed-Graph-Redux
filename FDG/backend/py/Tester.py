@@ -8,7 +8,7 @@ class Tester:
         for no_label_entity in no_label_entities:
             entities.pop(no_label_entity, None)
 
-        no_label_properties = self.test_property_labels(properties, True)
+        no_label_properties = self.test_property_labels(properties, console)
         non_mapped_ids = self.test_relations(entities, relations, console)
 
         cleaned_relations = {}

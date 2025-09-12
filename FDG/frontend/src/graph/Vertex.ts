@@ -28,13 +28,16 @@ export class Vertex {
     }
 
     private _selected: boolean;
+    get selected() {
+        return this._selected;
+    }
     set selected(isSelected: boolean) {
         this._selected = isSelected;
     }
 
     // Generic Data
     private readonly _name: string;
-    
+
     private readonly _id: string;
     get id() {
         return this._id;
@@ -104,6 +107,8 @@ export class Vertex {
      * Updates position of the Vertex using the vector's values. Also applies damping
      */
     update() {
+        if (this.selected) return;
+
         const MAX_SPEED = Vertex.MAX_SPEED;
         this._pos.x += MathUtility.clamp(this._velocity.x, -MAX_SPEED, MAX_SPEED);
         this._pos.y += MathUtility.clamp(this._velocity.y, -MAX_SPEED, MAX_SPEED);

@@ -64,7 +64,7 @@ export class CanvasUtility {
      * Generates a random HSL color with pleasant saturation/lightness
      */
     static randomNiceColor() {
-        if (this.PALETTE.length >= this._paletteIndex) {
+        if (this.PALETTE.length <= this._paletteIndex) {
             const hue = Math.floor(Math.random() * CanvasUtility.COLOURS.HUE_MAX) + CanvasUtility.COLOURS.HUE_MIN;
             const saturation =
                 Math.floor(Math.random() * CanvasUtility.COLOURS.SATURATION_MAX) + CanvasUtility.COLOURS.SATURATION_MIN;
@@ -93,12 +93,5 @@ export class CanvasUtility {
     static resizeCanvas(canvas: HTMLCanvasElement) {
         canvas.width = window.innerWidth - 300;
         canvas.height = window.innerHeight;
-    }
-
-    /**
-     * Changes font size in a CSS font string
-     */
-    static getFontString(fontFamily: string, newSizePx: number): string {
-        return `bold ${newSizePx}px ${fontFamily}`;
     }
 }

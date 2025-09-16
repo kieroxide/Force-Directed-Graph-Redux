@@ -154,46 +154,60 @@ export class Graph {
         this._selectedVertex = undefined;
     }
 
-    /** Positions new vertices in circle around existing graph center */
-    appendVerticesPos(new_vertices: Record<string, Vertex>) {
-        // Gets all current Vertices midpoint
-        let midpointsum = new Vec(0, 0);
-        let numOfOldVertices = 0;
-        for (const vertex of this.getVertices()) {
-            if (!new_vertices[vertex.id]) {
-                midpointsum = Vec.add(midpointsum, vertex.pos);
-                numOfOldVertices++;
+    /** Positions new vertices in circle around existing graph center or a passed point */
+    appendVerticesPos(
+        new_vertices: Record<string, Vertex>,
+        midpoint: Vec | undefined = undefined,
+        radius = Graph.INITIAL_RADIUS
+    ) {
+        if (midpoint === undefined) {
+            // Gets all current Vertices midpoint
+            let midpointsum = new Vec(0, 0);
+            let numOfOldVertices = 0;
+            for (const vertex of this.getVertices()) {
+                if (!new_vertices[vertex.id]) {
+                    midpointsum = Vec.add(midpointsum, vertex.pos);
+                    numOfOldVertices++;
+                }
+            }
+
+            if (numOfOldVertices === 0) {
+                midpoint = new Vec(this._canvas.width / 2, this._canvas.height / 2);
+            } else {
+                midpoint = Vec.divideXY(midpointsum, numOfOldVertices);
             }
         }
 
-        let midpoint;
-        if (numOfOldVertices === 0) {
-            midpoint = new Vec(this._canvas.width / 2, this._canvas.height / 2);
-        } else {
-            midpoint = Vec.divideXY(midpointsum, numOfOldVertices);
-        }
-
         let new_vertices_vals = Object.values(new_vertices);
+
         // Circles the new Vertices around the midpoint
-        let positions = GeometryUtility.circlePoints(midpoint.x, midpoint.y, 200, new_vertices_vals.length);
+        let positions = GeometryUtility.circlePoints(midpoint!.x, midpoint!.y, radius, new_vertices_vals.length);
         for (let i = 0; i < new_vertices_vals.length; i++) {
             new_vertices_vals[i].pos.x = positions[i].x;
             new_vertices_vals[i].pos.y = positions[i].y;
         }
     }
 
-    /** Sets initial positions for all vertices in circular layouts */
-    initVerticesPos(vertices = this.getVertices()) {
+    /**
+     * BFS the graph and sets the component origins and returns the graph in BFS structure
+     */
+    updateComponents(vertices = this.getVertices()) {
         const components = GeometryUtility.bfsComponents(vertices);
-        const numComponents = [...components.keys()].length;
         components.forEach((component: Map<number, Vertex[]>) => {
             this._componentOrigins.add(component.get(0)![0]);
         });
+        return components;
+    }
+
+    /** Sets initial positions for all vertices in circular layouts */
+    initVerticesPos(vertices = this.getVertices()) {
+        const components = this.updateComponents(vertices);
+        const numComponents = [...components.keys()].length;
         // Gets comp origin positions to set them in a circular pattern around the center of canvas
         const comp_positions = GeometryUtility.circlePoints(
             this._canvas.width / 2,
             this._canvas.height / 2,
-            200, // TODO: Radius calc function
+            Graph.INITIAL_RADIUS, // TODO: Radius calc function
             numComponents
         );
 
@@ -213,28 +227,6 @@ export class Graph {
                     nodes[i].pos.x = positions[i].x;
                     nodes[i].pos.y = positions[i].y;
                 }
-            }
-        }
-    }
-    /** Assigns unique colors to any object type */
-    private assignUniqueColours<T>(
-        items: Iterable<T>,
-        getType: (item: T) => string,
-        setColour: (item: T, colour: string) => void
-    ) {
-        for (const item of items) {
-            const key = getType(item);
-            if (this._objectColours.has(key)) {
-                setColour(item, this._objectColours.get(key)!);
-            } else {
-                let colour: string;
-                const usedColours = new Set(this._objectColours.values());
-                do {
-                    colour = CanvasUtility.randomNiceColor();
-                } while (usedColours.has(colour));
-
-                this._objectColours.set(key, colour);
-                setColour(item, colour);
             }
         }
     }

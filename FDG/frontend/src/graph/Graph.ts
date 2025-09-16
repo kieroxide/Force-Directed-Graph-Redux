@@ -9,8 +9,7 @@ import { CanvasUtility } from "../utility/CanvasUtility";
 export class Graph {
     private static readonly INITIAL_RADIUS = 100;
 
-    private readonly _vertexColours = new Map<string, string>();
-    private readonly _edgeColours = new Map<string, string>();
+    private readonly _objectColours = new Map<string, string>();
     private readonly _ctx: CanvasRenderingContext2D;
     private readonly _canvas: HTMLCanvasElement;
 
@@ -217,37 +216,47 @@ export class Graph {
             }
         }
     }
-
-    /** Assigns unique colors to vertex types */
-    initVertexColour() {
-        for (const vertex of this.getVertices()) {
-            if (this._vertexColours.has(vertex.type)) {
-                vertex.labelColour = this._vertexColours.get(vertex.type)!;
+    /** Assigns unique colors to any object type */
+    private assignUniqueColours<T>(
+        items: Iterable<T>,
+        getType: (item: T) => string,
+        setColour: (item: T, colour: string) => void
+    ) {
+        for (const item of items) {
+            const key = getType(item);
+            if (this._objectColours.has(key)) {
+                setColour(item, this._objectColours.get(key)!);
             } else {
                 let colour: string;
+                const usedColours = new Set(this._objectColours.values());
                 do {
                     colour = CanvasUtility.randomNiceColor();
-                } while (new Set(this._vertexColours.values()).has(colour));
-                this._vertexColours.set(vertex.type, colour);
-                vertex.labelColour = colour;
+                } while (usedColours.has(colour));
+
+                this._objectColours.set(key, colour);
+                setColour(item, colour);
             }
         }
     }
 
+    /** Assigns unique colors to vertex types */
+    initVertexColour() {
+        CanvasUtility.assignUniqueColours(
+            this.getVertices(),
+            this._objectColours,
+            (v: Vertex) => v.type,
+            (v, c) => (v.labelColour = c)
+        );
+    }
+
     /** Assigns unique colors to edge types */
     initEdgeColour() {
-        for (const edge of this._edges) {
-            if (this._edgeColours.has(edge.types[0])) {
-                edge.lineColour = this._edgeColours.get(edge.types[0])!;
-            } else {
-                let colour: string;
-                do {
-                    colour = CanvasUtility.randomNiceColor();
-                } while (new Set(this._vertexColours.values()).has(colour));
-                this._edgeColours.set(edge.types[0], colour);
-                edge.lineColour = colour;
-            }
-        }
+        CanvasUtility.assignUniqueColours(
+            this._edges,
+            this._objectColours,
+            (v: Edge) => v.mainType,
+            (v, c) => (v.edgeColour = c)
+        );
     }
 
     /** Returns all vertices as array */

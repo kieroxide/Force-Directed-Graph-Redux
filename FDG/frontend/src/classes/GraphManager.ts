@@ -1,6 +1,7 @@
 import { Graph } from "../graph/Graph";
 import { NetworkUtility } from "../utility/NetworkUtility";
 import { Vertex } from "../graph/Vertex";
+import type { Vec } from "../graph/Vec";
 
 interface EntityData {
     label: string;
@@ -25,7 +26,7 @@ export class GraphManager {
         this._ctx = ctx;
         this._graph = new Graph(ctx, canvas);
     }
-    
+
     get graph() {
         return this._graph;
     }
@@ -33,7 +34,7 @@ export class GraphManager {
     get ctx(): CanvasRenderingContext2D {
         return this._ctx;
     }
-    
+
     /**
      * Loads graph data from server and updates visualization
      */
@@ -60,7 +61,7 @@ export class GraphManager {
     /**
      * Parses API response and adds entities/relations to the graph
      */
-    private parseAndAddToGraph(data: BackendResponse["data"], append = false) {
+    private parseAndAddToGraph(data: BackendResponse["data"], append = false, midpoint: Vec | undefined = undefined) {
         // Track existing vertices to compute new ones when appending
         const preExistingIds = new Set(Object.keys(this._graph.vertices));
 
@@ -71,7 +72,13 @@ export class GraphManager {
         // Add / merge vertices
         for (const [vertexId, entity] of Object.entries(data.entities)) {
             if (!this._graph.vertices[vertexId]) {
-                this._graph.vertices[vertexId] = new Vertex(vertexId, entity.label, entity.type, entity.image, this._ctx);
+                this._graph.vertices[vertexId] = new Vertex(
+                    vertexId,
+                    entity.label,
+                    entity.type,
+                    entity.image,
+                    this._ctx
+                );
             }
         }
 
@@ -98,7 +105,7 @@ export class GraphManager {
                 }
             }
             if (Object.keys(newVertices).length > 0) {
-                this._graph.appendVerticesPos(newVertices);
+                this._graph.appendVerticesPos(newVertices, midpoint);
             }
         } else {
             this._graph.initVerticesPos();
@@ -114,7 +121,8 @@ export class GraphManager {
         try {
             const backendResp: BackendResponse = await NetworkUtility.fetchGraphData(vertexId, depth, relationLimit);
             const append = true;
-            this.parseAndAddToGraph(backendResp.data, append);
+            const vertex = this._graph.getVertex(vertexId);
+            this.parseAndAddToGraph(backendResp.data, append, vertex.pos);
             return this._graph;
         } catch (error) {
             console.error("Error expanding graph:", error);

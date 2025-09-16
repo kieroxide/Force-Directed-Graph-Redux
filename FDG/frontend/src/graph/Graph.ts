@@ -19,8 +19,7 @@ export class Graph {
     private _componentOrigins: Set<Vertex>;
     private _selectedVertex?: Vertex;
     private _lastClickedVertex?: Vertex;
-    
-    
+
     /** Creates a new graph with rendering context and canvas */
     constructor(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
         this._ctx = ctx;
@@ -29,7 +28,7 @@ export class Graph {
         this._edges = [];
         this._componentOrigins = new Set();
     }
-    
+
     get vertices() {
         return this._vertices;
     }
@@ -44,7 +43,7 @@ export class Graph {
     get lastClickedVertex() {
         return this._lastClickedVertex;
     }
-    
+
     /** Gets vertex by ID */
     getVertex(id: string) {
         return this._vertices[id];

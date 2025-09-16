@@ -4,11 +4,12 @@ import { UIController } from "./src/classes/UIController";
 import { InputManager } from "./src/classes/InputManager";
 import { CanvasUtility } from "./src/utility/CanvasUtility";
 import { RenderingUtility } from "./src/utility/RenderingUtility";
+import { NetworkUtility } from "./src/utility/NetworkUtility";
 
 class Application {
     private readonly canvas: HTMLCanvasElement;
     private readonly ctx: CanvasRenderingContext2D;
-    
+
     private camera!: Camera;
     private graphManager!: GraphManager;
     private uiController!: UIController;
@@ -47,10 +48,14 @@ class Application {
 
         // Initialize UI and input managers
         this.uiController = new UIController(this.graphManager);
-        this.inputManager = new InputManager(this.canvas, this.camera, this.graphManager,  this.uiController);
+        this.inputManager = new InputManager(this.canvas, this.camera, this.graphManager, this.uiController);
     }
 
-    private startRenderLoop() {
+    private async startRenderLoop() {
+        // Flushed all previous data sent by previous instances out from the server
+        // To prevent old data being merged with a new server request
+        await NetworkUtility.flushSever(this.graphManager);
+        
         const gameLoop = () => {
             // Run physics simulation
             this.graphManager.simulate();

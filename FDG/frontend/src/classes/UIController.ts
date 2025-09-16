@@ -69,7 +69,10 @@ export class UIController {
             const entityId = this._elements.wikiInput?.value.trim() || "Q1"; // defualt to universe
             const appendMode = settings.appendMode && !this._graphManager.isEmpty(); // loads if empty
             await this._graphManager.fetchRelations(entityId, settings.depth, settings.relationLimit, appendMode);
-
+            if (appendMode) {
+                // When appending graph may be disconnected and BFS origins need to be redefined
+                this._graphManager.graph.updateComponents();
+            }
             this.showSuccess(`Graph loaded for: ${entityId}`);
         } catch (error) {
             console.error("Error fetching graph:", error);

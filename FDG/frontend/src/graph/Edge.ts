@@ -21,14 +21,14 @@ export class Edge {
 
     private _isBidirectional: boolean;
     private _types: string[];
-    lineColour: string;
+    edgeColour: string;
 
     constructor(sourceID: string, targetID: string, type: string, graph: Graph, isBiDirectional: boolean = false) {
         this._sourceId = sourceID;
         this._targetId = targetID;
         this._isBidirectional = isBiDirectional;
         this._types = [type];
-        this.lineColour = "#000000"; // Default colour
+        this.edgeColour = "#000000"; // Default colour
         this._sourceRef = graph.getVertex(sourceID);
         this._targetRef = graph.getVertex(targetID);
 
@@ -40,15 +40,19 @@ export class Edge {
     get targetRef() {
         return this._targetRef;
     }
-    
+
     get sourceRef() {
         return this._sourceRef;
     }
-    
+
     set isBidirectional(isBidirectional: boolean) {
         this._isBidirectional = isBidirectional;
     }
-    
+
+    get mainType() {
+        const MAIN_TYPE_INDEX = 0;
+        return this.types[MAIN_TYPE_INDEX];
+    }
     get types() {
         return this._types;
     }
@@ -57,8 +61,8 @@ export class Edge {
     }
 
     draw(ctx: CanvasRenderingContext2D) {
-        ctx.strokeStyle = this.lineColour || "#00000012";
-        ctx.fillStyle = this.lineColour;
+        ctx.strokeStyle = this.edgeColour || "#00000012";
+        ctx.fillStyle = this.edgeColour;
         ctx.lineWidth = Edge.LINE_SIZE;
         this.drawArrow(ctx, this._sourceRef, this._targetRef);
         this.drawLabelText(ctx);

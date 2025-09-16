@@ -10,55 +10,21 @@ export class Vertex {
 
     // Euclidean Data
     private readonly _pos: Vec;
-    get pos() {
-        return this._pos;
-    }
-
     private _velocity: Vec;
-    get velocity() {
-        return this._velocity;
-    }
-    killVelocity() {
-        this._velocity = new Vec(0, 0);
-    }
-
     private readonly _connectedEdges: Array<Edge>;
-    get connectedEdges() {
-        return this._connectedEdges;
-    }
-
     private _selected: boolean;
-    get selected() {
-        return this._selected;
-    }
-    set selected(isSelected: boolean) {
-        this._selected = isSelected;
-    }
 
     // Generic Data
     private readonly _name: string;
-
     private readonly _id: string;
-    get id() {
-        return this._id;
-    }
-
     private readonly _type: string;
-    get type() {
-        return this._type;
-    }
 
-    img: HTMLImageElement | undefined;
     // Visual Label
+    img: HTMLImageElement | undefined;
     private readonly _label: string;
-    get label() {
-        return this._label;
-    }
-
     public textWidth?: number;
     public textHeight?: number;
     labelColour?: string;
-
     _cachedDimensions?: {
         // Text measurements
         labelWidth: number;
@@ -101,6 +67,40 @@ export class Vertex {
         this.labelColour = undefined;
 
         this._cachedDimensions = VertexUtility.ensureValidCache(ctx, this);
+    }
+
+    get velocity() {
+        return this._velocity;
+    }
+    killVelocity() {
+        this._velocity = new Vec(0, 0);
+    }
+
+    get connectedEdges() {
+        return this._connectedEdges;
+    }
+    set selected(isSelected: boolean) {
+        this._selected = isSelected;
+    }
+
+    get selected() {
+        return this._selected;
+    }
+
+    get id() {
+        return this._id;
+    }
+
+    get type() {
+        return this._type;
+    }
+
+    get label() {
+        return this._label;
+    }
+
+    get pos() {
+        return this._pos;
     }
 
     /**

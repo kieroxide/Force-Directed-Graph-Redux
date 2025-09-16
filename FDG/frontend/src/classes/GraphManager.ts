@@ -19,19 +19,21 @@ interface BackendResponse {
 
 export class GraphManager {
     private readonly _graph: Graph;
-    get graph() {
-        return this._graph;
-    }
-
     private readonly _ctx: CanvasRenderingContext2D;
-    get ctx(): CanvasRenderingContext2D {
-        return this._ctx;
-    }
+
     constructor(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
         this._ctx = ctx;
         this._graph = new Graph(ctx, canvas);
     }
+    
+    get graph() {
+        return this._graph;
+    }
 
+    get ctx(): CanvasRenderingContext2D {
+        return this._ctx;
+    }
+    
     /**
      * Loads graph data from server and updates visualization
      */

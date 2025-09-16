@@ -14,11 +14,12 @@ export class Camera {
         this._zoom = 1;
         this._cameraLockedVertex = null;
     }
-    set cameraLockedVertex(vertex: Vertex | null) {
-        this._cameraLockedVertex = vertex;
-    }
+
     get cameraLockedVertex() {
         return this._cameraLockedVertex;
+    }
+    set cameraLockedVertex(vertex: Vertex | null) {
+        this._cameraLockedVertex = vertex;
     }
 
     /**

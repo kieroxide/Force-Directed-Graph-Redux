@@ -15,25 +15,12 @@ export class Graph {
     private readonly _canvas: HTMLCanvasElement;
 
     private _vertices: Record<string, Vertex>;
-    get vertices() {
-        return this._vertices;
-    }
     private _edges: Array<Edge>;
-    get edges() {
-        return this._edges;
-    }
     private _componentOrigins: Set<Vertex>;
-
     private _selectedVertex?: Vertex;
-    get selectedVertex() {
-        return this._selectedVertex;
-    }
-
     private _lastClickedVertex?: Vertex;
-    get lastClickedVertex() {
-        return this._lastClickedVertex;
-    }
-
+    
+    
     /** Creates a new graph with rendering context and canvas */
     constructor(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
         this._ctx = ctx;
@@ -42,7 +29,22 @@ export class Graph {
         this._edges = [];
         this._componentOrigins = new Set();
     }
+    
+    get vertices() {
+        return this._vertices;
+    }
+    get edges() {
+        return this._edges;
+    }
 
+    get selectedVertex() {
+        return this._selectedVertex;
+    }
+
+    get lastClickedVertex() {
+        return this._lastClickedVertex;
+    }
+    
     /** Gets vertex by ID */
     getVertex(id: string) {
         return this._vertices[id];

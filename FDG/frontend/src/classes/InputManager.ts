@@ -10,7 +10,7 @@ export class InputManager {
     private readonly camera: Camera;
     private readonly graphManager: GraphManager;
     private readonly uiController: UIController;
-    
+
     private isDraggingCamera = false;
     private isExpandingVertex = false;
     private clickTimer: number | null = null;
@@ -39,6 +39,7 @@ export class InputManager {
         const graph = this.graphManager.graph;
         if (graph.lastClickedVertex) {
             const settings = this.uiController.getSettings();
+            
             this.isExpandingVertex = true;
             await this.graphManager.expandFromVertex(
                 graph.lastClickedVertex.id,

@@ -15,28 +15,12 @@ export class Edge {
 
     private readonly _sourceId: string;
     private readonly _sourceRef: Vertex;
-    get sourceRef() {
-        return this._sourceRef;
-    }
 
     private readonly _targetId: string;
     private readonly _targetRef: Vertex;
-    get targetRef() {
-        return this._targetRef;
-    }
 
     private _isBidirectional: boolean;
-    set isBidirectional(isBidirectional: boolean) {
-        this._isBidirectional = isBidirectional;
-    }
-
     private _types: string[];
-    get types() {
-        return this._types;
-    }
-    set types(type: string[]) {
-        this._types = type;
-    }
     lineColour: string;
 
     constructor(sourceID: string, targetID: string, type: string, graph: Graph, isBiDirectional: boolean = false) {
@@ -51,6 +35,25 @@ export class Edge {
         if (!this._sourceRef || !this._targetRef) {
             throw new Error(`Invalid vertex IDs: source=${sourceID}, target=${targetID}`);
         }
+    }
+
+    get targetRef() {
+        return this._targetRef;
+    }
+    
+    get sourceRef() {
+        return this._sourceRef;
+    }
+    
+    set isBidirectional(isBidirectional: boolean) {
+        this._isBidirectional = isBidirectional;
+    }
+    
+    get types() {
+        return this._types;
+    }
+    set types(type: string[]) {
+        this._types = type;
     }
 
     draw(ctx: CanvasRenderingContext2D) {

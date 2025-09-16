@@ -1,8 +1,8 @@
 import { Vec } from "../graph/Vec";
 import { Vertex } from "../graph/Vertex";
-import { VERTEX_FONT } from "../../constants/font";
+import { FONT } from "../../constants/font";
 import { Camera } from "../classes/Camera";
-import { CanvasUtility } from "./CanvasUtility";
+import { TextUtility } from "./TextUtility";
 
 export class VertexUtility {
     private static readonly BOX_PADDING = 15;
@@ -75,7 +75,7 @@ export class VertexUtility {
         const typeY = vertex.pos.y + lineHeight / 2;
 
         // Draw label text
-        ctx.font = CanvasUtility.getFontString(VERTEX_FONT.FAMILY, cache.fontSize);
+        ctx.font = TextUtility.getFontString(FONT.FAMILY, cache.fontSize);
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillStyle = "black";
@@ -83,7 +83,7 @@ export class VertexUtility {
 
         // Draw type text smaller
         const typeFontSize = Math.max(12, cache.fontSize - VertexUtility.TYPE_FONT_SIZE_REDUCTION);
-        ctx.font = CanvasUtility.getFontString(VERTEX_FONT.FAMILY, typeFontSize);
+        ctx.font = TextUtility.getFontString(FONT.FAMILY, typeFontSize);
         ctx.fillStyle = "rgba(0, 0, 0, 0.8)";
         ctx.fillText(vertex.type, vertex.pos.x, typeY);
     }
@@ -124,7 +124,7 @@ export class VertexUtility {
         ctx.stroke();
 
         // Draw label text
-        ctx.font = CanvasUtility.getFontString(VERTEX_FONT.FAMILY, cache.fontSize);
+        ctx.font = TextUtility.getFontString(FONT.FAMILY, cache.fontSize);
         ctx.textAlign = "left";
         ctx.textBaseline = "middle";
         ctx.fillStyle = "black";
@@ -132,7 +132,7 @@ export class VertexUtility {
 
         // Draw type text in smaller font
         const typeFontSize = Math.max(12, cache.fontSize - VertexUtility.TYPE_FONT_SIZE_REDUCTION);
-        ctx.font = CanvasUtility.getFontString(VERTEX_FONT.FAMILY, typeFontSize);
+        ctx.font = TextUtility.getFontString(FONT.FAMILY, typeFontSize);
         ctx.fillStyle = "rgba(0, 0, 0, 0.8)";
         ctx.fillText(vertex.type, textX, typeY);
     }
@@ -142,20 +142,20 @@ export class VertexUtility {
      */
     static calculateAndCacheDimensions(ctx: CanvasRenderingContext2D, vertex: Vertex, forceFontSize?: number) {
         const mass = this.getOriginalMass(vertex);
-        const fontSize = forceFontSize || VERTEX_FONT.SIZE + mass * VERTEX_FONT.MASS_WEIGHT;
+        const fontSize = forceFontSize || FONT.SIZE + mass * FONT.MASS_WEIGHT;
         const hasImage = (vertex.img && vertex.img.complete && vertex.img.naturalWidth > 0)!;
 
         // Measure text dimensions
-        ctx.font = CanvasUtility.getFontString(VERTEX_FONT.FAMILY, fontSize);
+        ctx.font = TextUtility.getFontString(FONT.FAMILY, fontSize);
         const labelMetrics = ctx.measureText(vertex.label);
         const labelWidth = labelMetrics.width;
-        const labelHeight = labelMetrics.actualBoundingBoxAscent + labelMetrics.actualBoundingBoxDescent;
+        const labelHeight = TextUtility.getTextHeight(labelMetrics);
 
         const typeFontSize = Math.max(this.MIN_TYPE_FONT_SIZE, fontSize - this.TYPE_FONT_SIZE_REDUCTION);
-        ctx.font = CanvasUtility.getFontString(VERTEX_FONT.FAMILY, typeFontSize);
+        ctx.font = TextUtility.getFontString(FONT.FAMILY, typeFontSize);
         const typeMetrics = ctx.measureText(vertex.type);
         const typeWidth = typeMetrics.width;
-        const typeHeight = typeMetrics.actualBoundingBoxAscent + typeMetrics.actualBoundingBoxDescent;
+        const typeHeight = TextUtility.getTextHeight(typeMetrics);
 
         const maxTextWidth = Math.max(labelWidth, typeWidth);
         const maxTextHeight = Math.max(labelHeight, typeHeight);
@@ -210,7 +210,7 @@ export class VertexUtility {
      */
     static ensureValidCache(ctx: CanvasRenderingContext2D, vertex: Vertex) {
         const mass = this.getOriginalMass(vertex);
-        const fontSize = VERTEX_FONT.SIZE + mass * VERTEX_FONT.MASS_WEIGHT;
+        const fontSize = FONT.SIZE + mass * FONT.MASS_WEIGHT;
         const hasImage = vertex.img && vertex.img.complete && vertex.img.naturalWidth > 0;
 
         const cache = vertex._cachedDimensions;

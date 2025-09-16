@@ -12,6 +12,14 @@ export class GeometryUtility {
         return Math.atan2(dy, dx);
     }
     /**
+     * Returns distance between two points
+     */
+    static distance(vertexPosA: Vec, vertexPosB: Vec) {
+        const dx = vertexPosA.x - vertexPosB.x;
+        const dy = vertexPosA.y - vertexPosB.y;
+        return Math.sqrt(dx * dx + dy * dy)
+    }
+    /**
      *  Returns midpoint between two points
      */
     static getMidpoint(pointA: Vec, pointB: Vec) {

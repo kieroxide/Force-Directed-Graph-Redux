@@ -3,8 +3,9 @@ import type { Vertex } from "./Vertex.ts";
 import { Vec } from "./Vec.ts";
 import { RenderingUtility } from "../utility/RenderingUtility.ts";
 import { GeometryUtility } from "../utility/GeometryUtility.ts";
-import { VERTEX_FONT } from "../../constants/font.ts";
+import { FONT } from "../../constants/font.ts";
 import { VertexUtility } from "../utility/VertexUtility.ts";
+import { TextUtility } from "../utility/TextUtility.ts";
 
 export class Edge {
     private static readonly LINE_SIZE = 4;
@@ -12,6 +13,9 @@ export class Edge {
     private static readonly ARROW_HEAD_ANGLE = Math.PI / 6;
     private static readonly BIDIRECTIONAL_OFFSET_SCALE = 20;
     private static readonly LABEL_DISTANCE_FROM_MIDPOINT = 20;
+    private static readonly LABEL_PADDING = 40;
+    private static readonly LABEL_MAX_FONT = 36;
+    private static readonly LABEL_MIN_FONT = 12;
 
     private readonly _sourceId: string;
     private readonly _sourceRef: Vertex;
@@ -72,12 +76,6 @@ export class Edge {
      * Calculates and draws the edge's type property above/below the edge
      */
     drawLabelText(ctx: CanvasRenderingContext2D) {
-        let distanceFromMidpoint = Edge.LABEL_DISTANCE_FROM_MIDPOINT;
-        // Add extra offset if biDirectional
-        if (this._isBidirectional) {
-            distanceFromMidpoint += Edge.BIDIRECTIONAL_OFFSET_SCALE;
-        }
-
         const source = this.sourceRef.pos;
         const target = this.targetRef.pos;
 
@@ -86,8 +84,41 @@ export class Edge {
         VertexUtility.ensureValidCache(ctx, this.targetRef);
 
         // Gets the positions minus the box to avoid label being hidden by drawn box
-        const sourceIntersect = GeometryUtility.getBoxIntersect(source, this.sourceRef);
-        const targetIntersect = GeometryUtility.getBoxIntersect(target, this.targetRef);
+        const sourceIntersect = GeometryUtility.getBoxIntersect(target, this.sourceRef);
+        const targetIntersect = GeometryUtility.getBoxIntersect(source, this.targetRef);
+
+        // Builds the label as multiple properties can be assigned to an edge
+        let typeLabel = "";
+        for (let i = 0; i < this._types.length; i++) {
+            typeLabel += this._types[i];
+            if (i != this._types.length - 1) {
+                typeLabel += ", ";
+            }
+        }
+
+        // Calculates the best font size for the edge based of vertex distance
+        const padding = Edge.LABEL_PADDING;
+        const distanceInbetween = GeometryUtility.distance(sourceIntersect, targetIntersect) - padding;
+        const maxLabelWidth = distanceInbetween * 0.7;
+        if (maxLabelWidth <= 0) return;
+        
+        const maxFont = Edge.LABEL_MAX_FONT;
+        const minFont = Edge.LABEL_MIN_FONT;
+        let fontSize = maxFont;
+        while (fontSize > minFont) {
+            ctx.font = `bold ${fontSize}px ${FONT.FAMILY}`;
+            if (ctx.measureText(typeLabel).width <= maxLabelWidth) {
+                break;
+            }
+            fontSize -= 1;
+        }
+
+        const labelMetrics = ctx.measureText(typeLabel);
+
+        // If label is still too large, dont display it
+        if (labelMetrics.width >= maxLabelWidth) {
+            return;
+        }
 
         // we want the midpoint of the source -> target
         const midpoint = GeometryUtility.getMidpoint(sourceIntersect, targetIntersect);
@@ -95,6 +126,13 @@ export class Edge {
         // then we want the perpendicular angle + a static distance from midpoint
         let angle = GeometryUtility.lineAngle(source, target);
         const perpAngle = angle + Math.PI / 2;
+
+        let distanceFromMidpoint = Edge.LABEL_DISTANCE_FROM_MIDPOINT + TextUtility.getTextHeight(labelMetrics) / 2;
+
+        // Add extra offset if biDirectional
+        if (this._isBidirectional) {
+            distanceFromMidpoint += Edge.BIDIRECTIONAL_OFFSET_SCALE;
+        }
 
         const textPos = new Vec(
             midpoint.x + distanceFromMidpoint * Math.cos(perpAngle),
@@ -106,20 +144,22 @@ export class Edge {
             angle += Math.PI;
         }
 
-        // Builds the label as multiple properties can be assigned to an edge
-        let typeLabel = "";
-        for (let i = 0; i < this._types.length; i++) {
-            typeLabel += this._types[i];
-            if (i != this._types.length - 1) {
-                typeLabel += ", ";
-            }
-        }
+        // Minus the size of the arrowhead to avoid overlapping with arrowhead
+        const dx = targetIntersect.x - source.x;
+        const dy = targetIntersect.y - source.y;
+
+        const arrowAngle = Math.atan2(dy, dx);
+        const arrowLength = Edge.ARROW_HEAD_SIZE;
+        const xArrowOffset = arrowLength * Math.cos(arrowAngle);
+        const yArrowOffset = arrowLength * Math.sin(arrowAngle);
+
+        textPos.x -= xArrowOffset;
+        textPos.y -= yArrowOffset;
 
         // Draw text in same orientation of the edge
         ctx.save();
         ctx.translate(textPos.x, textPos.y);
         ctx.rotate(angle);
-        ctx.font = VERTEX_FONT.FULL;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillStyle = "white";

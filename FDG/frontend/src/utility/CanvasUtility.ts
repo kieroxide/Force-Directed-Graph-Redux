@@ -36,11 +36,35 @@ export class CanvasUtility {
         return color;
     }
 
+    /** Assigns unique colors to any object type */
+    static assignUniqueColours<T>(
+        items: Iterable<T>,
+        setColours: Map<string, string>,
+        getType: (item: T) => string,
+        setColour: (item: T, colour: string) => void
+    ) {
+        for (const item of items) {
+            const key = getType(item);
+            if (setColours.has(key)) {
+                setColour(item, setColours.get(key)!);
+            } else {
+                let colour: string;
+                const usedColours = new Set(setColours.values());
+                do {
+                    colour = CanvasUtility.randomNiceColor();
+                } while (usedColours.has(colour));
+
+                setColours.set(key, colour);
+                setColour(item, colour);
+            }
+        }
+    }
+
     /**
      * Generates a random HSL color with pleasant saturation/lightness
      */
     static randomNiceColor() {
-        if (this.PALETTE.length >= this._paletteIndex){
+        if (this.PALETTE.length >= this._paletteIndex) {
             const hue = Math.floor(Math.random() * CanvasUtility.COLOURS.HUE_MAX) + CanvasUtility.COLOURS.HUE_MIN;
             const saturation =
                 Math.floor(Math.random() * CanvasUtility.COLOURS.SATURATION_MAX) + CanvasUtility.COLOURS.SATURATION_MIN;
@@ -48,10 +72,10 @@ export class CanvasUtility {
                 Math.floor(Math.random() * CanvasUtility.COLOURS.LIGHTNESS_MAX) + CanvasUtility.COLOURS.LIGHTNESS_MIN;
             return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
         } else {
-            return this.nextNiceColor()
+            return this.nextNiceColor();
         }
     }
-    
+
     /**
      * Converts browser mouse coordinates to canvas coordinates
      */

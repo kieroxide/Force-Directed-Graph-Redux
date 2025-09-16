@@ -1,4 +1,4 @@
-export const VERTEX_FONT = {
+export const FONT = {
     SIZE: 20,
     FAMILY: "sans-serif",
     MASS_WEIGHT: 3,

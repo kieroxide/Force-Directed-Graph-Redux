@@ -1,5 +1,6 @@
 import { GraphManager } from "./GraphManager";
 import { MathUtility } from "../utility/MathUtility";
+import { NetworkUtility } from "../utility/NetworkUtility";
 
 export class UIController {
     private readonly _graphManager: GraphManager;
@@ -66,7 +67,16 @@ export class UIController {
         try {
             this.setLoadingState(true);
             const settings = this.getSettings();
-            const entityId = this._elements.wikiInput?.value.trim() || "Q1"; // defualt to universe
+            let entityId = this._elements.wikiInput?.value.trim().toUpperCase() || "Q1"; // defualt to universe
+            if (!/^Q\d+$/.test(entityId)) {
+                const qid = await NetworkUtility.fetchQIDByName(entityId);
+                if (qid) {
+                    entityId = qid;
+                } else {
+                    this.showError("No Wikidata entity found for that name.");
+                    return;
+                }
+            }
             const appendMode = settings.appendMode && !this._graphManager.isEmpty(); // loads if empty
             await this._graphManager.fetchRelations(entityId, settings.depth, settings.relationLimit, appendMode);
             if (appendMode) {

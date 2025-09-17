@@ -3,7 +3,6 @@ import { VertexUtility } from "../VertexUtility";
 
 export class Repulsion {
     private static readonly STRENGTH = 1000;
-    private static readonly REPULSION_CUTOFF = 1000;
 
     static repulsion(vertices: Array<Vertex>, strength: number = Repulsion.STRENGTH, exponent: number = 1) {
         for (let i = 0; i < vertices.length; i++) {
@@ -17,7 +16,6 @@ export class Repulsion {
                 const centerDistance = Math.sqrt(dx * dx + dy * dy);
 
                 if (centerDistance === 0) continue; // Avoid division by zero
-                if (centerDistance >= Repulsion.REPULSION_CUTOFF) continue; // Skip far away nodes
 
                 const width_offset = vertexA._cachedDimensions!.boxWidth / 2 + vertexB._cachedDimensions!.boxWidth / 2;
 

@@ -3,7 +3,29 @@ import type { GraphManager } from "../classes/GraphManager";
 import { Vec } from "../graph/Vec";
 
 export class RenderingUtility {
-    private static readonly BACKGROUND_COLOR = "#2b2b2bff";
+    private static readonly BACKGROUND_COLOR = "#f5ecd7 ";
+    static _paperPattern: CanvasPattern | null = null;
+
+    static async loadPaperTexture(ctx: CanvasRenderingContext2D, scale: number = 1) {
+        return new Promise<void>((resolve) => {
+            const img = new window.Image();
+            img.src = "/textures/paper_texture.jpg";
+            img.onload = () => {
+                // Create an offscreen canvas to scale the image
+                const offCanvas = document.createElement("canvas");
+                offCanvas.width = img.width * scale;
+                offCanvas.height = img.height * scale;
+                const offCtx = offCanvas.getContext("2d")!;
+                offCtx.drawImage(img, 0, 0, offCanvas.width, offCanvas.height);
+
+                RenderingUtility._paperPattern = ctx.createPattern(offCanvas, "repeat");
+                resolve();
+            };
+            img.onerror = () => {
+                resolve();
+            };
+        });
+    }
 
     static render(
         ctx: CanvasRenderingContext2D,
@@ -14,6 +36,13 @@ export class RenderingUtility {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = RenderingUtility.BACKGROUND_COLOR;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
+        if (RenderingUtility._paperPattern) {
+            ctx.save();
+            ctx.globalAlpha = 0.5;
+            ctx.fillStyle = RenderingUtility._paperPattern;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.restore();
+        }
 
         ctx.save(); // save and restore to avoid transforms stacking
         camera.applyTransform(ctx, canvas);
@@ -54,7 +83,7 @@ export class RenderingUtility {
             endY: lineEndY + offset.y,
         };
     }
-    
+
     /**
      * Draw the arrowhead at the specified position
      */

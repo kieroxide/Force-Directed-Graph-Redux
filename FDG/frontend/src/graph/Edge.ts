@@ -12,10 +12,13 @@ export class Edge {
     private static readonly ARROW_HEAD_SIZE = 30;
     private static readonly ARROW_HEAD_ANGLE = Math.PI / 6;
     private static readonly BIDIRECTIONAL_OFFSET_SCALE = 20;
+
     private static readonly LABEL_DISTANCE_FROM_MIDPOINT = 20;
     private static readonly LABEL_PADDING = 40;
-    private static readonly LABEL_MAX_FONT = 36;
+    private static readonly LABEL_MAX_FONT = 24;
     private static readonly LABEL_MIN_FONT = 12;
+
+    private static readonly LABEL_COLOUR = "#2e2e2eff";
 
     private readonly _sourceId: string;
     private readonly _sourceRef: Vertex;
@@ -101,7 +104,7 @@ export class Edge {
         const distanceInbetween = GeometryUtility.distance(sourceIntersect, targetIntersect) - padding;
         const maxLabelWidth = distanceInbetween * 0.7;
         if (maxLabelWidth <= 0) return;
-        
+
         const maxFont = Edge.LABEL_MAX_FONT;
         const minFont = Edge.LABEL_MIN_FONT;
         let fontSize = maxFont;
@@ -162,7 +165,9 @@ export class Edge {
         ctx.rotate(angle);
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.fillStyle = "white";
+        ctx.shadowColor = Edge.LABEL_COLOUR;
+        ctx.shadowBlur = 1;
+        ctx.fillStyle = Edge.LABEL_COLOUR;
         ctx.fillText(typeLabel, 0, 0);
         ctx.restore();
     }
@@ -197,9 +202,11 @@ export class Edge {
 
         // Line
         ctx.beginPath();
+        ctx.setLineDash([5, 4]);
         ctx.moveTo(positions.sourceX, positions.sourceY);
         ctx.lineTo(positions.endX, positions.endY);
         ctx.stroke();
+        ctx.setLineDash([]);
 
         // Arrowhead
         RenderingUtility.drawArrowhead(

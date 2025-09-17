@@ -6,7 +6,11 @@ import { MathUtility } from "../utility/MathUtility";
 export class Vertex {
     private static readonly MAX_SPEED = 20;
     private static readonly DAMPING = 0.9;
-    private static RECT_RADIX = 40;
+
+    private static readonly RECT_RADIX = 40;
+    private static readonly VERTEX_COLOUR = "#fffbe6";
+    static readonly LABEL_MAX_FONT = 22;
+    static readonly LABEL_MIN_FONT = 18;
 
     // Euclidean Data
     private readonly _pos: Vec;
@@ -21,10 +25,12 @@ export class Vertex {
 
     // Visual Label
     img: HTMLImageElement | undefined;
+    thumbnail: HTMLCanvasElement | undefined;
     private readonly _label: string;
     public textWidth?: number;
     public textHeight?: number;
     labelColour?: string;
+
     _cachedDimensions?: {
         // Text measurements
         labelWidth: number;
@@ -63,6 +69,17 @@ export class Vertex {
         if (imgURL != "") {
             this.img = new Image();
             this.img.src = imgURL;
+            this.img.onload = () => {
+                // Create a lower resolution thumbnail
+                const size = 356;
+                const canvas = document.createElement("canvas");
+                canvas.width = size;
+                canvas.height = size;
+                const ctx = canvas.getContext("2d")!;
+                ctx.drawImage(this.img!, 0, 0, size, size);
+                this.thumbnail = canvas;
+                this.img = undefined; // Removes large image from memory
+            };
         }
         this.labelColour = undefined;
 
@@ -125,7 +142,7 @@ export class Vertex {
         const boxTop = this.pos.y - cache.boxHeight / 2;
 
         // Draw background box
-        ctx.fillStyle = this.labelColour || "grey";
+        ctx.fillStyle = Vertex.VERTEX_COLOUR;
         ctx.beginPath();
         ctx.roundRect(boxLeft, boxTop, cache.boxWidth, cache.boxHeight, Vertex.RECT_RADIX);
         ctx.fill();
@@ -138,10 +155,12 @@ export class Vertex {
         }
 
         // Draw box border
-        ctx.strokeStyle = this._selected ? "yellow" : "black";
-        ctx.lineWidth = this._selected ? 3 : 1;
+        ctx.strokeStyle = this._selected ? "yellow" : this.labelColour!;
+        ctx.lineWidth = this._selected ? 8 : 5;
         ctx.beginPath();
+        ctx.setLineDash([2, 4, 3]);
         ctx.roundRect(boxLeft, boxTop, cache.boxWidth, cache.boxHeight, Vertex.RECT_RADIX);
         ctx.stroke();
+        ctx.setLineDash([]);
     }
 }

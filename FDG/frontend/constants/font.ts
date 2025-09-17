@@ -1,7 +1,7 @@
 export const FONT = {
-    SIZE: 20,
-    FAMILY: "sans-serif",
-    MASS_WEIGHT: 3,
+    SIZE: 18,
+    FAMILY: "Open Sans",
+    MASS_WEIGHT: 1,
     get FULL() {
         return `bold ${this.SIZE}px ${this.FAMILY}`;
     },

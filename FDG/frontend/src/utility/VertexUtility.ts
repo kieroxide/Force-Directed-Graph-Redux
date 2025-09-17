@@ -3,6 +3,7 @@ import { Vertex } from "../graph/Vertex";
 import { FONT } from "../../constants/font";
 import { Camera } from "../classes/Camera";
 import { TextUtility } from "./TextUtility";
+import { MathUtility } from "./MathUtility";
 
 export class VertexUtility {
     private static readonly BOX_PADDING = 15;
@@ -103,12 +104,13 @@ export class VertexUtility {
         const typeY = vertex.pos.y + lineHeight / 2;
 
         // Draw circular image
+        const imageToDraw = vertex.thumbnail || vertex.img!;
         ctx.save();
         ctx.beginPath();
         ctx.arc(imageX, imageY, cache.imgSize / 2, 0, Math.PI * 2);
         ctx.clip();
         ctx.drawImage(
-            vertex.img!,
+            imageToDraw,
             imageX - cache.imgSize / 2,
             imageY - cache.imgSize / 2,
             cache.imgSize,
@@ -142,8 +144,10 @@ export class VertexUtility {
      */
     static calculateAndCacheDimensions(ctx: CanvasRenderingContext2D, vertex: Vertex, forceFontSize?: number) {
         const mass = this.getOriginalMass(vertex);
-        const fontSize = forceFontSize || FONT.SIZE + mass * FONT.MASS_WEIGHT;
-        const hasImage = (vertex.img && vertex.img.complete && vertex.img.naturalWidth > 0)!;
+        const fontSize =
+            forceFontSize ||
+            MathUtility.clamp(FONT.SIZE + mass * FONT.MASS_WEIGHT, Vertex.LABEL_MIN_FONT, Vertex.LABEL_MAX_FONT);
+        const hasImage = !!(vertex.thumbnail || (vertex.img && vertex.img.complete && vertex.img.naturalWidth > 0));
 
         // Measure text dimensions
         ctx.font = TextUtility.getFontString(FONT.FAMILY, fontSize);

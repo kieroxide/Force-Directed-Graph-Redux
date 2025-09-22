@@ -165,8 +165,6 @@ export class Edge {
         ctx.rotate(angle);
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.shadowColor = Edge.LABEL_COLOUR;
-        ctx.shadowBlur = 1;
         ctx.fillStyle = Edge.LABEL_COLOUR;
         ctx.fillText(typeLabel, 0, 0);
         ctx.restore();
@@ -202,11 +200,9 @@ export class Edge {
 
         // Line
         ctx.beginPath();
-        ctx.setLineDash([5, 4]);
         ctx.moveTo(positions.sourceX, positions.sourceY);
         ctx.lineTo(positions.endX, positions.endY);
         ctx.stroke();
-        ctx.setLineDash([]);
 
         // Arrowhead
         RenderingUtility.drawArrowhead(

@@ -5,10 +5,18 @@ import { NetworkUtility } from "../utility/NetworkUtility";
 export class UIController {
     private readonly _graphManager: GraphManager;
 
+    private _suggestions: Array<{
+        id: string;
+        label: string;
+    }>;
+
+    private _selectedSuggestion = -1;
+
     private _elements: {
         fetchButton?: HTMLButtonElement;
         clearButton?: HTMLButtonElement;
         wikiInput?: HTMLInputElement;
+        suggestionsDiv?: HTMLDivElement;
         appendMode?: HTMLInputElement;
         depthSlider?: HTMLInputElement;
         depthValue?: HTMLSpanElement;
@@ -19,6 +27,7 @@ export class UIController {
 
     constructor(graphManager: GraphManager) {
         this._graphManager = graphManager;
+        this._suggestions = [];
         this._elements = this.getElements();
         this.setupEventListeners();
         this.updateDepthDisplay();
@@ -34,6 +43,7 @@ export class UIController {
             fetchButton: document.getElementById("fetch-graph") as HTMLButtonElement,
             clearButton: document.getElementById("clear-graph") as HTMLButtonElement,
             wikiInput: document.getElementById("wiki-input") as HTMLInputElement,
+            suggestionsDiv: document.getElementById("suggestions") as HTMLDivElement,
             appendMode: document.getElementById("append-mode") as HTMLInputElement,
             depthSlider: document.getElementById("depth-slider") as HTMLInputElement,
             depthValue: document.getElementById("depth-value") as HTMLSpanElement,
@@ -49,7 +59,8 @@ export class UIController {
     private setupEventListeners() {
         // Fetch graph button
         this._elements.fetchButton?.addEventListener("click", () => this.handleFetchGraph());
-
+        this._elements.wikiInput?.addEventListener("input", () => this.handleInputSuggestions());
+        this._elements.wikiInput?.addEventListener("keydown", (e) => this.handleSuggestionKeydown(e));
         // Clear graph button
         this._elements.clearButton?.addEventListener("click", () => this.handleClearGraph());
 
@@ -58,6 +69,109 @@ export class UIController {
 
         // Entity limit slider
         this._elements.relationLimit?.addEventListener("input", () => this.updateEntityLimitDisplay());
+
+        this._elements.suggestionsDiv?.addEventListener("mousedown", (e) => this.handleSuggestionClick(e));
+    }
+
+    private handleSuggestionClick(e: MouseEvent) {
+        const target = e.target as HTMLElement;
+        const div = target.closest("div[data-index]");
+        if (div) {
+            const index = parseInt(div.getAttribute("data-index")!);
+            this.selectSuggestion(index);
+        }
+    }
+
+    /**
+     * Handles fetching graph data for suggestion that is selected
+     */
+    private selectSuggestion(index: number) {
+        const selected = this._suggestions[index];
+        if (selected) {
+            this._elements.wikiInput!.value = selected.label;
+
+            // Clear suggestions
+            this._elements.suggestionsDiv!.innerHTML = "";
+            this._suggestions = [];
+            this._selectedSuggestion = -1;
+
+            // Load the graph for selected QID
+            this.handleFetchGraph();
+        }
+    }
+
+    /**
+     * Handles searching the wikidata API for top 4 suggestions from input
+     */
+    private async handleInputSuggestions() {
+        const query = this._elements.wikiInput?.value.trim();
+        // Render an empty suggestions if empty
+        if (!query) {
+            this._suggestions = [];
+            this.renderSuggestions();
+            return;
+        }
+        try {
+            const url = `https://www.wikidata.org/w/api.php?action=wbsearchentities&search=${encodeURIComponent(
+                query
+            )}&language=en&format=json&origin=*`;
+            const response = await fetch(url);
+            const data = await response.json();
+
+            // Takes the top 4 results and converts to a list of item objects
+            const suggestions = (data.search || []).slice(0, 4).map((item: any) => ({
+                id: item.id,
+                label: item.label,
+            }));
+            this._suggestions = suggestions;
+            this.renderSuggestions();
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    /**
+     * Renders suggestions to the user as HTML
+     */
+    private renderSuggestions() {
+        const suggestions = this._suggestions;
+        const suggestionsDiv = this._elements.suggestionsDiv!;
+
+        if (suggestions.length === 0) {
+            suggestionsDiv.innerHTML = "";
+            suggestionsDiv.style.display = "none";
+            return;
+        }
+        suggestionsDiv.style.display = "block";
+        suggestionsDiv.innerHTML = suggestions
+            .map(
+                (data, index) =>
+                    `<div class="${index === this._selectedSuggestion ? "selected" : ""}" data-index="${index}">
+                <strong>${data.label}</strong> <span style="color:#888;">${data.id}</span>
+            </div>`
+            )
+            .join("");
+    }
+
+    /**
+     * Handles keyboard input for the suggestions
+     */
+    private handleSuggestionKeydown(e: KeyboardEvent) {
+        if (!this._suggestions.length) return;
+        if (e.key === "ArrowDown") {
+            this._selectedSuggestion = Math.min(this._selectedSuggestion + 1, this._suggestions.length - 1);
+            this.renderSuggestions();
+            e.preventDefault();
+        } else if (e.key === "ArrowUp") {
+            this._selectedSuggestion = Math.max(this._selectedSuggestion - 1, 0);
+            this.renderSuggestions();
+            e.preventDefault();
+        } else if (e.key === "Enter") {
+            if (this._selectedSuggestion >= 0) {
+                this.selectSuggestion(this._selectedSuggestion);
+                e.preventDefault();
+            }
+        }
     }
 
     /**
@@ -66,6 +180,7 @@ export class UIController {
     private async handleFetchGraph() {
         try {
             this.setLoadingState(true);
+
             const settings = this.getSettings();
             let entityId = this._elements.wikiInput?.value.trim().toUpperCase() || "Q1"; // defualt to universe
             if (!/^Q\d+$/.test(entityId)) {
@@ -111,6 +226,11 @@ export class UIController {
 
         if (this._elements.clearButton) {
             this._elements.clearButton.disabled = loading;
+        }
+
+        const spinner = document.getElementById("loading-spinner");
+        if (spinner) {
+            spinner.style.display = loading ? "flex" : "none";
         }
     }
 

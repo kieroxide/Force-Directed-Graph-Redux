@@ -2,6 +2,10 @@ import { Vec } from "./Vec";
 import { Edge } from "./Edge";
 import { VertexUtility } from "../utility/VertexUtility";
 import { MathUtility } from "../utility/MathUtility";
+import { FrameQueue } from "../utility/FrameQueue";
+import config from "../../../config.json";
+
+const THUMBNAIL_SIZE: number = config.THUMBNAIL_SIZE;
 
 export class Vertex {
     private static readonly MAX_SPEED = 20;
@@ -67,18 +71,19 @@ export class Vertex {
 
         this._label = this._name;
         if (imgURL != "") {
-            this.img = new Image();
-            this.img.src = imgURL;
-            this.img.onload = () => {
-                // Create a lower resolution thumbnail
-                const size = 356;
-                const canvas = document.createElement("canvas");
-                canvas.width = size;
-                canvas.height = size;
-                const ctx = canvas.getContext("2d")!;
-                ctx.drawImage(this.img!, 0, 0, size, size);
-                this.thumbnail = canvas;
-                this.img = undefined; // Removes large image from memory
+            const img = new Image();
+            img.src = imgURL;
+            img.onload = () => {
+                FrameQueue.push(() => {
+                    const size = THUMBNAIL_SIZE;
+                    const canvas = document.createElement("canvas");
+                    canvas.width = size;
+                    canvas.height = size;
+                    const ctx = canvas.getContext("2d")!;
+                    ctx.drawImage(img, 0, 0, size, size);
+                    this.thumbnail = canvas;
+                    this.img = undefined; // Removes large image from memory
+                });
             };
         }
         this.labelColour = undefined;

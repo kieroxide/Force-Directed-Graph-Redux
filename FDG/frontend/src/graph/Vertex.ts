@@ -8,7 +8,7 @@ import config from "../../../config.json";
 const THUMBNAIL_SIZE: number = config.THUMBNAIL_SIZE;
 
 export class Vertex {
-    private static readonly MAX_SPEED = 20;
+    private static readonly MAX_SPEED = 12;
     private static readonly DAMPING = 0.9;
 
     private static readonly RECT_RADIX = 40;
@@ -23,7 +23,6 @@ export class Vertex {
     private _selected: boolean;
 
     // Generic Data
-    private readonly _name: string;
     private readonly _id: string;
     private readonly _type: string;
     private readonly _wikiTitle: string;
@@ -35,6 +34,7 @@ export class Vertex {
     public textWidth?: number;
     public textHeight?: number;
     labelColour?: string;
+    expanding = false;
 
     _cachedDimensions?: {
         // Text measurements
@@ -61,16 +61,25 @@ export class Vertex {
         hasImage: boolean;
     };
 
-    constructor(id: string, name: string, type: string = "", imgURL: string = "", ctx: CanvasRenderingContext2D) {
+    constructor(
+        id: string,
+        label: string,
+        type: string = "",
+        imgURL: string = "",
+        wikiTitle: string = "",
+        ctx: CanvasRenderingContext2D
+    ) {
         this._pos = new Vec(200, 200);
         this._velocity = new Vec(0, 0);
+
         this._id = id;
         this._label = label;
         this._type = type;
+        this._wikiTitle = wikiTitle;
+
         this._selected = false;
         this._connectedEdges = [];
 
-        this._label = this._name;
         if (imgURL != "") {
             const img = new Image();
             img.src = imgURL;
@@ -179,12 +188,21 @@ export class Vertex {
         }
 
         // Draw box border
-        ctx.strokeStyle = this._selected ? "yellow" : this.labelColour!;
-        ctx.lineWidth = this._selected ? 8 : 5;
+        let borderColour = this._selected ? "yellow" : this.labelColour!;
+        let borderWidth = this._selected ? 8 : 5;
+        if (this.expanding) {
+            // Animate border color and width
+            const now = performance.now();
+            // Pulse between two colors
+            const pulse = (Math.sin(now / 250) + 1) / 2;
+            borderColour = `rgba(102, 126, 234, ${0.5 + 0.5 * pulse})`; // blue with pulsing alpha
+            borderWidth = 7 + 5 * pulse;
+        }
+
+        ctx.strokeStyle = borderColour;
+        ctx.lineWidth = borderWidth;
         ctx.beginPath();
-        ctx.setLineDash([2, 4, 3]);
         ctx.roundRect(boxLeft, boxTop, cache.boxWidth, cache.boxHeight, Vertex.RECT_RADIX);
         ctx.stroke();
-        ctx.setLineDash([]);
     }
 }

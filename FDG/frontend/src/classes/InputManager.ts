@@ -3,7 +3,7 @@ import { GraphManager } from "../classes/GraphManager";
 import { CanvasUtility } from "../utility/CanvasUtility";
 import { VertexUtility } from "../utility/VertexUtility";
 import type { UIController } from "./UIController";
-import type { Vertex } from "../graph/Vertex";
+import { Vertex } from "../graph/Vertex";
 
 export class InputManager {
     private readonly canvas: HTMLCanvasElement;
@@ -68,11 +68,22 @@ export class InputManager {
         // Both single and double click set that as main vertex
         this.graphManager.graph.setSelectedVertex(hitVertex!);
 
+        // Ctrl click opens vertex wiki page
+        if (hitVertex) {
+            if (e.ctrlKey || e.metaKey) {
+                const wikiURL = `https://en.wikipedia.org/wiki/${encodeURIComponent(hitVertex.wikiTitle)}`;
+                window.open(wikiURL, "_blank", "noopener,noreferrer");
+                return;
+            }
+        }
+
         if (this.clickTimer) {
+            // Double click
             clearTimeout(this.clickTimer);
             this.clickTimer = null;
             this.camera.cameraLockedVertex = hitVertex!;
         } else {
+            // Single Click
             this.clickTimer = setTimeout(() => {
                 this.clickTimer = null;
             }, 250);

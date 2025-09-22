@@ -2,11 +2,13 @@ import { Graph } from "../graph/Graph";
 import { NetworkUtility } from "../utility/NetworkUtility";
 import { Vertex } from "../graph/Vertex";
 import type { Vec } from "../graph/Vec";
+import { MathUtility } from "../utility/MathUtility";
 
 interface EntityData {
     label: string;
     type: string;
     image: string;
+    wikipedia: string;
 }
 
 interface BackendResponse {
@@ -77,6 +79,7 @@ export class GraphManager {
                     entity.label,
                     entity.type,
                     entity.image,
+                    entity.wikipedia,
                     this._ctx
                 );
             }
@@ -115,9 +118,25 @@ export class GraphManager {
     }
 
     /**
+     * Expands all vertices in depth frontier up to relationGoal
+     */
+    async expandVertex(vertexToExpand: Vertex, graphManager: GraphManager, depth: number, relationGoal: number) {
+        let expandedVertices = new Set<Vertex>();
+        for (let currentDepth = 1; currentDepth < depth + 1; currentDepth++) {
+            const depthSet = MathUtility.depthSearch(vertexToExpand, currentDepth);
+            const currentFrontier = MathUtility.difference(depthSet, expandedVertices);
+
+            for (const vertex of currentFrontier) {
+                await graphManager.expandTillLimit(vertex, relationGoal);
+                expandedVertices.add(vertex);
+            }
+        }
+    }
+    
+    /**
      * Expands graph by fetching related entities for a vertex and appending to graph
      */
-    async expandFromVertex(vertexId: string, depth: number, relationLimit: number = 5): Promise<Graph> {
+    private async appendVertexExpansion(vertexId: string, depth: number, relationLimit: number = 5): Promise<Graph> {
         try {
             const backendResp: BackendResponse = await NetworkUtility.fetchGraphData(vertexId, depth, relationLimit);
             const append = true;
@@ -128,6 +147,29 @@ export class GraphManager {
             console.error("Error expanding graph:", error);
             throw error;
         }
+    }
+
+    /**
+     * Expands a vertex until it reaches the entityGoal number of edges
+     */
+    private async expandTillLimit(vertex: Vertex, entityGoal: number) {
+        vertex.expanding = true;
+        let attempts = 0;
+        let expandedRelationCount = 0;
+        while (vertex.connectedEdges.length < entityGoal) {
+            expandedRelationCount++;
+            let numBeforeExpansion = vertex.connectedEdges.length;
+
+            const depth = 1;
+            await this.appendVertexExpansion(vertex.id, depth, entityGoal + expandedRelationCount);
+            if (numBeforeExpansion === vertex.connectedEdges.length) {
+                attempts += 1;
+            }
+            if (attempts === 10) {
+                break;
+            }
+        }
+        vertex.expanding = false;
     }
 
     /**

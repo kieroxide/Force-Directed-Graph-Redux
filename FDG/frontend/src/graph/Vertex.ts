@@ -101,6 +101,20 @@ export class Vertex {
     get connectedEdges() {
         return this._connectedEdges;
     }
+
+    get neighbours() {
+        const neighbours: Set<Vertex> = new Set();
+        for (const edge of this.connectedEdges) {
+            if (edge.sourceRef !== this) {
+                neighbours.add(edge.sourceRef);
+            }
+            if (edge.targetRef !== this) {
+                neighbours.add(edge.targetRef);
+            }
+        }
+        return neighbours;
+    }
+
     set selected(isSelected: boolean) {
         this._selected = isSelected;
     }

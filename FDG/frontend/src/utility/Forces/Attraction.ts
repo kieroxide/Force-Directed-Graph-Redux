@@ -6,7 +6,7 @@ import { VertexUtility } from "../VertexUtility";
 export class Attraction {
     private static readonly SPRING = 0.025;
     private static readonly CENTRAL_SPRING = 0.05;
-    private static readonly REST_LENGTH = 100;
+    private static readonly REST_LENGTH = 50;
 
     static centerAttraction(origins: Set<Vertex>, canvas: HTMLCanvasElement) {
         const canvasCenter = new Vec(canvas.width / 2, canvas.height / 2);
@@ -21,10 +21,7 @@ export class Attraction {
         });
     }
 
-    static springAttraction(
-        edges: Array<Edge>,
-        strength: number = Attraction.SPRING
-    ) {
+    static springAttraction(edges: Array<Edge>, strength: number = Attraction.SPRING) {
         for (const edge of edges) {
             const vertexA = edge.sourceRef;
             const vertexB = edge.targetRef;
@@ -43,10 +40,12 @@ export class Attraction {
             const normX = dx / distance;
             const normY = dy / distance;
 
-            const width_offset =
-                vertexA._cachedDimensions!.boxWidth / 2 + vertexB._cachedDimensions!.boxWidth / 2;
+            const width_offset = vertexA._cachedDimensions!.boxWidth / 2 + vertexB._cachedDimensions!.boxWidth / 2;
 
-            const displacement = distance - (Attraction.REST_LENGTH + width_offset);
+            const avg_mass = (VertexUtility.getOriginalMass(vertexA) + VertexUtility.getOriginalMass(vertexB)) / 2;
+            const rest_length = Math.log2(2 + avg_mass) + Attraction.REST_LENGTH;
+            const displacement = distance - (rest_length + width_offset);
+
             const force = strength * displacement;
 
             // Pull two vertex's together

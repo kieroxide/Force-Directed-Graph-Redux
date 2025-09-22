@@ -26,6 +26,7 @@ export class Vertex {
     private readonly _name: string;
     private readonly _id: string;
     private readonly _type: string;
+    private readonly _wikiTitle: string;
 
     // Visual Label
     img: HTMLImageElement | undefined;
@@ -64,7 +65,7 @@ export class Vertex {
         this._pos = new Vec(200, 200);
         this._velocity = new Vec(0, 0);
         this._id = id;
-        this._name = name;
+        this._label = label;
         this._type = type;
         this._selected = false;
         this._connectedEdges = [];
@@ -133,6 +134,10 @@ export class Vertex {
 
     get label() {
         return this._label;
+    }
+
+    get wikiTitle() {
+        return this._wikiTitle;
     }
 
     get pos() {

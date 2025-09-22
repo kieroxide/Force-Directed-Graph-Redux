@@ -5,6 +5,7 @@ import { Repulsion } from "../utility/Forces/Repulsion";
 import { Attraction } from "../utility/Forces/Attraction";
 import { GeometryUtility } from "../utility/GeometryUtility";
 import { CanvasUtility } from "../utility/CanvasUtility";
+import { MathUtility } from "../utility/MathUtility.ts";
 
 export class Graph {
     private static readonly INITIAL_RADIUS = 100;
@@ -134,6 +135,7 @@ export class Graph {
         Repulsion.repulsion(this.getVertices());
         Attraction.springAttraction(this._edges);
         Attraction.centerAttraction(this._componentOrigins, this._canvas);
+
         this.update();
     }
 
@@ -174,7 +176,7 @@ export class Graph {
             if (numOfOldVertices === 0) {
                 midpoint = new Vec(this._canvas.width / 2, this._canvas.height / 2);
             } else {
-                midpoint = Vec.divideXY(midpointsum, numOfOldVertices);
+                midpoint = Vec.scalarDivide(midpointsum, numOfOldVertices);
             }
         }
 
@@ -192,7 +194,7 @@ export class Graph {
      * BFS the graph and sets the component origins and returns the graph in BFS structure
      */
     updateComponents(vertices = this.getVertices()) {
-        const components = GeometryUtility.bfsComponents(vertices);
+        const components = MathUtility.bfsComponents(vertices);
         components.forEach((component: Map<number, Vertex[]>) => {
             this._componentOrigins.add(component.get(0)![0]);
         });

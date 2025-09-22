@@ -8,11 +8,15 @@
         <title>Force-Directed Graph Visualizer</title>
     </head>
     <body>
+        <div id="loading-spinner" style="display: none">
+            <div class="spinner"></div>
+        </div>
         <div id="app">
             <div class="sidebar">
                 <div class="control-group">
                     <h3>Graph Input</h3>
-                    <input type="text" id="wiki-input" placeholder="Enter Wikipedia QID (e.g., Q1)" />
+                    <input type="text" id="wiki-input" placeholder="Search Wikidata entities" autocomplete="off" />
+                    <div id="suggestions"></div>
                     <button id="fetch-graph">Fetch Graph</button>
 
                     <div class="checkbox-container">

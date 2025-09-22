@@ -32,20 +32,17 @@ export class InputManager {
         this.canvas.addEventListener("wheel", (e) => this.handleWheel(e)); // zooming in/out
     }
 
+    // Handles expansion of vertices
     private async handleRightClick(e: MouseEvent) {
         e.preventDefault();
         if (this.isExpandingVertex) return;
-
         const graph = this.graphManager.graph;
-        if (graph.lastClickedVertex) {
+        let vertexToExpand = graph.lastClickedVertex;
+
+        if (vertexToExpand) {
             const settings = this.uiController.getSettings();
-            
             this.isExpandingVertex = true;
-            await this.graphManager.expandFromVertex(
-                graph.lastClickedVertex.id,
-                settings.depth,
-                settings.relationLimit
-            );
+            await this.graphManager.expandVertex(vertexToExpand, this.graphManager, settings.depth, settings.relationLimit);
             this.isExpandingVertex = false;
         }
     }

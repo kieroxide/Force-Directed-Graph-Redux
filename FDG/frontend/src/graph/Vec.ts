@@ -21,9 +21,26 @@ export class Vec {
     }
 
     /**
+     * Subtracts 2nd vector from first
+     */
+    static subtract(vector: Vec, tosubtract: Vec) {
+        return new Vec(vector.x - tosubtract.x, vector.y - tosubtract.y);
+    }
+
+    /**
      * Divides vector components by a scalar
      */
-    static divideXY(v1: Vec, denom: number) {
+    static scalarDivide(v1: Vec, denom: number) {
         return new Vec(v1.x / denom, v1.y / denom);
+    }
+
+    static sqrt(vector: Vec) {
+        return new Vec(Math.sqrt(vector.x), Math.sqrt(vector.y));
+    }
+
+    static distance(v1: Vec, v2: Vec) {
+        const subtracted = Vec.subtract(v1, v2);
+        const sum = subtracted.x + subtracted.y;
+        return Math.sqrt(sum);
     }
 }

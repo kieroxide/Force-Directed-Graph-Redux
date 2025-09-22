@@ -6,6 +6,17 @@ import { CanvasUtility } from "./src/utility/CanvasUtility";
 import { RenderingUtility } from "./src/utility/RenderingUtility";
 import { NetworkUtility } from "./src/utility/NetworkUtility";
 
+const frameQueue: Array<() => void> = [];
+
+function processFrameQueue() {
+    if (frameQueue.length > 0) {
+        const task = frameQueue.shift();
+        task && task();
+    }
+    requestAnimationFrame(processFrameQueue);
+}
+processFrameQueue();
+
 class Application {
     private readonly canvas: HTMLCanvasElement;
     private readonly ctx: CanvasRenderingContext2D;

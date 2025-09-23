@@ -1,4 +1,4 @@
-from .Wikidata_Client import Wikidata_Client
+from .Wikidata_Client.Wikidata_Client import Wikidata_Client
 from .Data_Handler import Data_Handler
 
 class Entity_Crawler:

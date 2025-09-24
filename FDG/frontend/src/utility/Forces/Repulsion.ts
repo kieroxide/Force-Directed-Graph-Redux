@@ -1,5 +1,3 @@
-import type { Edge } from "../../graph/Edge";
-import { Vec } from "../../graph/Vec";
 import { Vertex } from "../../graph/Vertex";
 import { VertexUtility } from "../VertexUtility";
 import { repulsion } from "../Forces/Rust/fdg_wasm/pkg/fdg_wasm";

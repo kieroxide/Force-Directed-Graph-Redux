@@ -1,7 +1,13 @@
+/// <reference types="vite/client" />
 import type { GraphManager } from "../classes/GraphManager";
 
 export class NetworkUtility {
-    static readonly API_BASE = "https://wikidatatoentitygraph-production.up.railway.app/api";
+    // Ensures automatic switch of server location based on whether production or local
+    static readonly API_BASE =
+        import.meta.env["VITE_API_BASE"] ||
+        (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+            ? "http://localhost:5000/api"
+            : "https://wikidatatoentitygraph-production.up.railway.app/api");
 
     static async fetchQIDByName(searchInput: string) {
         const url = `https://www.wikidata.org/w/api.php?action=wbsearchentities&search=${encodeURIComponent(
@@ -9,6 +15,7 @@ export class NetworkUtility {
         )}&language=en&format=json&origin=*`;
         const response = await fetch(url);
         const data = await response.json();
+
         if (data.search && data.search.length > 0) {
             return data.search[0].id; // QID of the top result
         }

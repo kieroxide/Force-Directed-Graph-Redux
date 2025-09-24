@@ -6,27 +6,6 @@ export class RenderingUtility {
     private static readonly BACKGROUND_COLOR = "#faf8f8ff ";
     static _paperPattern: CanvasPattern | null = null;
 
-    static async loadPaperTexture(ctx: CanvasRenderingContext2D, scale: number = 1) {
-        return new Promise<void>((resolve) => {
-            const img = new window.Image();
-            img.src = "/textures/paper_texture.jpg";
-            img.onload = () => {
-                // Create an offscreen canvas to scale the image
-                const offCanvas = document.createElement("canvas");
-                offCanvas.width = img.width * scale;
-                offCanvas.height = img.height * scale;
-                const offCtx = offCanvas.getContext("2d")!;
-                offCtx.drawImage(img, 0, 0, offCanvas.width, offCanvas.height);
-
-                RenderingUtility._paperPattern = ctx.createPattern(offCanvas, "repeat");
-                resolve();
-            };
-            img.onerror = () => {
-                resolve();
-            };
-        });
-    }
-
     static render(
         ctx: CanvasRenderingContext2D,
         canvas: HTMLCanvasElement,

@@ -3,7 +3,7 @@ import type { GraphManager } from "../classes/GraphManager";
 import { Vec } from "../graph/Vec";
 
 export class RenderingUtility {
-    private static readonly BACKGROUND_COLOR = "#f5ecd7 ";
+    private static readonly BACKGROUND_COLOR = "#faf8f8ff ";
     static _paperPattern: CanvasPattern | null = null;
 
     static async loadPaperTexture(ctx: CanvasRenderingContext2D, scale: number = 1) {

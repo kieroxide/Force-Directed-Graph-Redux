@@ -5,6 +5,8 @@ import { InputManager } from "./src/classes/InputManager";
 import { CanvasUtility } from "./src/utility/CanvasUtility";
 import { RenderingUtility } from "./src/utility/RenderingUtility";
 import { NetworkUtility } from "./src/utility/NetworkUtility";
+import initWasm from "./src/utility/Forces/Rust/fdg_wasm/pkg/fdg_wasm";
+
 
 const frameQueue: Array<() => void> = [];
 
@@ -41,7 +43,7 @@ class Application {
         this.initializeComponents();
         this.startRenderLoop();
     }
-
+    
     private setupCanvas() {
         // Resize canvas to fit window
         CanvasUtility.resizeCanvas(this.canvas);
@@ -56,12 +58,12 @@ class Application {
         // Initialize core systems
         this.camera = new Camera();
         this.graphManager = new GraphManager(this.ctx!, this.canvas);
-
+        
         // Initialize UI and input managers
         this.uiController = new UIController(this.graphManager);
         this.inputManager = new InputManager(this.canvas, this.camera, this.graphManager, this.uiController);
     }
-
+    
     private async startRenderLoop() {
         // Flushed all previous data sent by previous instances out from the server
         // To prevent old data being merged with a new server request
@@ -71,10 +73,10 @@ class Application {
         const gameLoop = () => {
             // Run physics simulation
             this.graphManager.simulate();
-
+            
             // Render the graph
             RenderingUtility.render(this.ctx, this.canvas, this.camera, this.graphManager);
-
+            
             // Continue loop
             requestAnimationFrame(gameLoop);
         };
@@ -83,7 +85,8 @@ class Application {
 }
 
 // Start application when page loads
-window.onload = () => {
+window.onload = async () => {
+    await initWasm();
     try {
         new Application();
         console.log("Application started successfully");

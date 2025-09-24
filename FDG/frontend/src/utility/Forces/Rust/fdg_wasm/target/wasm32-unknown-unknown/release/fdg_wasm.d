@@ -1,0 +1,1 @@
+C:\Users\Owner\Desktop\Programs\Github\Force-Directed-Graph-Redux\FDG\frontend\src\utility\Forces\Rust\fdg_wasm\target\wasm32-unknown-unknown\release\fdg_wasm.wasm: C:\Users\Owner\Desktop\Programs\Github\Force-Directed-Graph-Redux\FDG\frontend\src\utility\Forces\Rust\fdg_wasm\src\lib.rs

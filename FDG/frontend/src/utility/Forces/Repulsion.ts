@@ -1,8 +1,11 @@
+import type { Edge } from "../../graph/Edge";
+import { Vec } from "../../graph/Vec";
 import { Vertex } from "../../graph/Vertex";
 import { VertexUtility } from "../VertexUtility";
+import { repulsion } from "../Forces/Rust/fdg_wasm/pkg/fdg_wasm";
 
 export class Repulsion {
-    private static readonly STRENGTH = 1000;
+    private static readonly STRENGTH = 800;
 
     static repulsion(vertices: Array<Vertex>, strength: number = Repulsion.STRENGTH, exponent: number = 1) {
         for (let i = 0; i < vertices.length; i++) {
@@ -10,32 +13,32 @@ export class Repulsion {
                 const vertexA = vertices[i];
                 const vertexB = vertices[j];
 
-                // Calculate distance
-                const dx = vertexB.pos.x - vertexA.pos.x;
-                const dy = vertexB.pos.y - vertexA.pos.y;
-                const centerDistance = Math.sqrt(dx * dx + dy * dy);
-
-                if (centerDistance === 0) continue; // Avoid division by zero
-
                 const width_offset = vertexA._cachedDimensions!.boxWidth / 2 + vertexB._cachedDimensions!.boxWidth / 2;
 
-                const edgeDistance = Math.max(centerDistance - width_offset, 2);
-                if (edgeDistance === 0) continue;
-                const force = strength / edgeDistance ** exponent;
+                // Call the WASM function
+                const result = repulsion(
+                    strength,
+                    vertexA.pos.x,
+                    vertexA.pos.y,
+                    vertexA.selected,
+                    VertexUtility.getOriginalMass(vertexA),
+                    vertexB.pos.x,
+                    vertexB.pos.y,
+                    vertexB.selected,
+                    VertexUtility.getOriginalMass(vertexB),
+                    width_offset,
+                    exponent
+                );
 
-                // Unit vector (direction)
-                const unitX = dx / centerDistance;
-                const unitY = dy / centerDistance;
+                // result is a JS array: [force1x, force1y, force2x, force2y]
+                const [force1x, force1y, force2x, force2y] = result;
+                
+                // Apply the returned forces
+                vertexA.velocity.x += force1x;
+                vertexA.velocity.y += force1y;
 
-                // Apply equal and opposite forces
-                if (!vertexA.selected) {
-                    vertexA.velocity.x -= unitX * (force / VertexUtility.getOriginalMass(vertexA));
-                    vertexA.velocity.y -= unitY * (force / VertexUtility.getOriginalMass(vertexA));
-                }
-                if (!vertexB.selected) {
-                    vertexB.velocity.x += unitX * (force / VertexUtility.getOriginalMass(vertexB));
-                    vertexB.velocity.y += unitY * (force / VertexUtility.getOriginalMass(vertexB));
-                }
+                vertexB.velocity.x -= force2x;
+                vertexB.velocity.y -= force2y;
             }
         }
     }

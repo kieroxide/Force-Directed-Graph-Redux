@@ -1,6 +1,8 @@
 import type { GraphManager } from "../classes/GraphManager";
 
 export class NetworkUtility {
+    static readonly API_BASE = "https://wikidatatoentitygraph-production.up.railway.app/api";
+
     static async fetchQIDByName(searchInput: string) {
         const url = `https://www.wikidata.org/w/api.php?action=wbsearchentities&search=${encodeURIComponent(
             searchInput
@@ -18,7 +20,8 @@ export class NetworkUtility {
      */
     static async fetchGraphData(QID: string, depth = 1, relationLimit = 5): Promise<any> {
         try {
-            const response = await fetch(`/api/graph/${QID}?depth=${depth}&relation_limit=${relationLimit}`);
+            const url = `${NetworkUtility.API_BASE}/graph/${QID}?depth=${depth}&relation_limit=${relationLimit}`;
+            const response = await fetch(url);
 
             if (!response.ok) {
                 throw new Error(`Server error: ${response.status} ${response.statusText}`);

@@ -8,7 +8,7 @@ import config from "../../../config.json";
 const THUMBNAIL_SIZE: number = config.THUMBNAIL_SIZE;
 
 export class Vertex {
-    private static readonly MAX_SPEED = 12;
+    private static readonly MAX_SPEED = 15;
     private static readonly DAMPING = 0.9;
 
     private static readonly RECT_RADIX = 40;

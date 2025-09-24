@@ -1,10 +1,14 @@
 import { defineConfig } from "vite";
 
 export default defineConfig({
-    base: '/Force-Directed-Graph-Redux/',
+    base: "/Force-Directed-Graph-Redux/",
     server: {
         proxy: {
             "/api": "http://localhost:5000",
         },
+    },
+    build: {
+        outDir: "../../docs",
+        emptyOutDir: true,
     },
 });

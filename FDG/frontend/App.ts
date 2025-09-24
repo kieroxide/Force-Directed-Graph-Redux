@@ -68,7 +68,6 @@ class Application {
         // Flushed all previous data sent by previous instances out from the server
         // To prevent old data being merged with a new server request
         await NetworkUtility.flushSever(this.graphManager);
-        await RenderingUtility.loadPaperTexture(this.ctx);
         
         const gameLoop = () => {
             // Run physics simulation

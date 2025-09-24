@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "build": "vite build",
     "start:backend": "cd ../backend && python WikiGraphServer.py",
     "start:both": "concurrently \"npm run start:backend\" \"npm run dev\""
   },

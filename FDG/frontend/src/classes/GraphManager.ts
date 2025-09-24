@@ -3,6 +3,7 @@ import { NetworkUtility } from "../utility/NetworkUtility";
 import { Vertex } from "../graph/Vertex";
 import type { Vec } from "../graph/Vec";
 import { MathUtility } from "../utility/MathUtility";
+import config from "../../../config.json";
 
 interface EntityData {
     label: string;
@@ -127,12 +128,14 @@ export class GraphManager {
             const currentFrontier = MathUtility.difference(depthSet, expandedVertices);
 
             for (const vertex of currentFrontier) {
+                vertex.expanding = true;
                 await graphManager.expandTillLimit(vertex, relationGoal);
+                vertex.expanding = false;
                 expandedVertices.add(vertex);
             }
         }
     }
-    
+
     /**
      * Expands graph by fetching related entities for a vertex and appending to graph
      */
@@ -153,7 +156,7 @@ export class GraphManager {
      * Expands a vertex until it reaches the entityGoal number of edges
      */
     private async expandTillLimit(vertex: Vertex, entityGoal: number) {
-        vertex.expanding = true;
+        const MAXIMUM_ATTEMPTS = config.MAXIMUM_ATTEMPTS;
         let attempts = 0;
         let expandedRelationCount = 0;
         while (vertex.connectedEdges.length < entityGoal) {
@@ -165,11 +168,10 @@ export class GraphManager {
             if (numBeforeExpansion === vertex.connectedEdges.length) {
                 attempts += 1;
             }
-            if (attempts === 10) {
+            if (attempts === MAXIMUM_ATTEMPTS) {
                 break;
             }
         }
-        vertex.expanding = false;
     }
 
     /**

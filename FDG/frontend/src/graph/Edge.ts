@@ -15,15 +15,13 @@ export class Edge {
 
     private static readonly LABEL_DISTANCE_FROM_MIDPOINT = 20;
     private static readonly LABEL_PADDING = 40;
-    private static readonly LABEL_MAX_FONT = 24;
+    private static readonly LABEL_MAX_FONT = 40;
     private static readonly LABEL_MIN_FONT = 12;
 
     private static readonly LABEL_COLOUR = "#2e2e2eff";
 
-    private readonly _sourceId: string;
     private readonly _sourceRef: Vertex;
 
-    private readonly _targetId: string;
     private readonly _targetRef: Vertex;
 
     private _isBidirectional: boolean;
@@ -31,8 +29,6 @@ export class Edge {
     edgeColour: string;
 
     constructor(sourceID: string, targetID: string, type: string, graph: Graph, isBiDirectional: boolean = false) {
-        this._sourceId = sourceID;
-        this._targetId = targetID;
         this._isBidirectional = isBiDirectional;
         this._types = [type];
         this.edgeColour = "#000000"; // Default colour

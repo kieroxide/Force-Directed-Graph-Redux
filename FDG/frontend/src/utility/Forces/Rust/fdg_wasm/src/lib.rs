@@ -8,6 +8,7 @@ pub fn repulsion(
     x2: f64, y2: f64, sel2: bool, mass2: f64,
     offset: f64, exponent: f64
 ) -> js_sys::Array {
+    
     let dx = x1 - x2;
     let dy = y1 - y2;
     let center_distance = (dx * dx + dy * dy).sqrt();

@@ -8,6 +8,7 @@
         <title>Force-Directed Graph Visualizer</title>
     </head>
     <body>
+        <div id="popup-message"></div>
         <div id="loading-spinner" style="display: none">
             <div class="spinner"></div>
         </div>
@@ -46,6 +47,7 @@
 
                 <div class="control-group">
                     <h3>Actions</h3>
+                    <button id="stop-expansions">Stop Expansions</button>
                     <button id="clear-graph">Clear Graph</button>
                     <div class="stats" id="graph-stats">Vertices: 0 | Edges: 0</div>
                 </div>
@@ -56,6 +58,7 @@
                         <li>Drag canvas to pan</li>
                         <li>Scroll to zoom</li>
                         <li>Drag vertices to move</li>
+                        <li>Ctrl-Click vertex to visit its Wikipedia Page</li>
                         <li>Right-click vertex to expand</li>
                     </ul>
                 </div>

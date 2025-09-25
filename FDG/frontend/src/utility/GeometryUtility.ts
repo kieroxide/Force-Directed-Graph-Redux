@@ -10,6 +10,7 @@ export class GeometryUtility {
         const dy = target.y - source.y;
         return Math.atan2(dy, dx);
     }
+
     /**
      * Returns distance between two points
      */
@@ -18,6 +19,7 @@ export class GeometryUtility {
         const dy = vertexPosA.y - vertexPosB.y;
         return Math.sqrt(dx * dx + dy * dy)
     }
+
     /**
      *  Returns midpoint between two points
      */
@@ -26,6 +28,7 @@ export class GeometryUtility {
         const yMid = (pointA.y + pointB.y) / 2;
         return new Vec(xMid, yMid);
     }
+
     /**
      *  Gets intersect from source point to vertex's boundary
      **/
@@ -47,13 +50,16 @@ export class GeometryUtility {
 
         return new Vec(target.pos.x - dx * scale, target.pos.y - dy * scale);
     }
+
     /**
      * Creates evenly spaced points around a circle
      */
     static circlePoints(centerX: number, centerY: number, radius: number, numOfPoints = 100): Array<Vec> {
         const points = [];
+        // Offset to avoid straight line graphs
+        const offset = Math.PI / 18
         for (let i = 0; i < numOfPoints; i++) {
-            const theta = (2 * Math.PI * i) / numOfPoints - Math.PI / 2;
+            const theta = (offset + (2 * Math.PI * i)) / numOfPoints - Math.PI / 2;
             const x = centerX + radius * Math.cos(theta);
             const y = centerY + radius * Math.sin(theta);
             points.push(new Vec(x, y));

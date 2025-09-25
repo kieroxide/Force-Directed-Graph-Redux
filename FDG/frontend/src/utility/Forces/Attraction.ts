@@ -3,11 +3,15 @@ import { Vec } from "../../graph/Vec";
 import { Edge } from "../../graph/Edge";
 import { VertexUtility } from "../VertexUtility";
 
+/**
+ * Static class for applying attraction forces to vertices.
+ */
 export class Attraction {
-    private static readonly SPRING = 0.025;
+    private static readonly SPRING = 0.06;
     private static readonly CENTRAL_SPRING = 0.05;
-    private static readonly REST_LENGTH = 10;
+    private static readonly REST_LENGTH = 30;
 
+    /** Applies a centering force to all origin vertices, pulling them toward the canvas center. */
     static centerAttraction(origins: Set<Vertex>, canvas: HTMLCanvasElement) {
         const canvasCenter = new Vec(canvas.width / 2, canvas.height / 2);
 
@@ -21,6 +25,7 @@ export class Attraction {
         });
     }
 
+    /** Applies spring-like attraction between connected vertices (edges). */
     static springAttraction(edges: Array<Edge>, strength: number = Attraction.SPRING) {
         for (const edge of edges) {
             const vertexA = edge.sourceRef;

@@ -5,7 +5,6 @@ export class MathUtility {
     /**
      * Clamps a value between a minimum and maximum
      */
-    /** Clamps a value between a minimum and maximum. */
     static clamp(value: number, min: number, max: number) {
         return Math.max(min, Math.min(value, max));
     }
@@ -36,9 +35,6 @@ export class MathUtility {
 
     /**
      * Groups vertices into connected components using BFS, organized by distance from origin
-     */
-    /**
-     * Groups vertices into connected components using BFS, organized by distance from origin.
      */
     static bfsComponents(vertices: Vertex[]): Map<number, Map<number, Vertex[]>> {
         const visited = new Set<Vertex>();

@@ -4,6 +4,7 @@ import { CanvasUtility } from "../utility/CanvasUtility";
 import { VertexUtility } from "../utility/VertexUtility";
 import type { UIController } from "./UIController";
 import { Vertex } from "../graph/Vertex";
+import { RenderingUtility } from "../utility/RenderingUtility";
 
 export class InputManager {
     private readonly canvas: HTMLCanvasElement;
@@ -24,26 +25,36 @@ export class InputManager {
     }
 
     private setupEventListeners() {
-        this.canvas.addEventListener("contextmenu", (e) => this.handleRightClick(e));   // expand from vertex
-        this.canvas.addEventListener("mousedown", (e) => this.handleMouseDown(e));      // dragging Camera/Vertex
-        this.canvas.addEventListener("mousemove", (e) => this.handleMouseMove(e));      // also dragging
-        this.canvas.addEventListener("mouseup", () => this.handleMouseUp());            // also dragging
-        this.canvas.addEventListener("mouseleave", () => this.handleMouseLeave());      // also dragging
-        this.canvas.addEventListener("wheel", (e) => this.handleWheel(e));              // zooming in/out
+        this.canvas.addEventListener("contextmenu", (e) => this.handleRightClick(e)); // expand from vertex
+        this.canvas.addEventListener("mousedown", (e) => this.handleMouseDown(e)); // dragging Camera/Vertex
+        this.canvas.addEventListener("mousemove", (e) => this.handleMouseMove(e)); // also dragging
+        this.canvas.addEventListener("mouseup", () => this.handleMouseUp()); // also dragging
+        this.canvas.addEventListener("mouseleave", () => this.handleMouseLeave()); // also dragging
+        this.canvas.addEventListener("wheel", (e) => this.handleWheel(e)); // zooming in/out
     }
 
     // Handles right click expansion of vertex/vertices
     private async handleRightClick(e: MouseEvent) {
         e.preventDefault();
-        if (this.isExpandingVertex) return; // One expansion click at a time
-        
+
+        // One expansion click at a time
+        if (this.isExpandingVertex) {
+            RenderingUtility.showError("Already Expanding a Vertex. Use stop expansions button to cancel current expansion");
+            return;
+        } 
+
         const graph = this.graphManager.graph;
         const vertexToExpand = graph.lastClickedVertex;
 
         if (vertexToExpand) {
             const settings = this.uiController.getSettings();
             this.isExpandingVertex = true;
-            await this.graphManager.expandVertex(vertexToExpand, this.graphManager, settings.depth, settings.relationLimit);
+            await this.graphManager.expandVertex(
+                vertexToExpand,
+                this.graphManager,
+                settings.depth,
+                settings.relationLimit
+            );
             this.isExpandingVertex = false;
         }
     }
@@ -102,10 +113,10 @@ export class InputManager {
                 if (this.camera.cameraLockedVertex === graph.selectedVertex) {
                     return;
                 }
-                
+
                 const mousePos = CanvasUtility.browserToCanvas(this.canvas, e);
                 const worldPos = this.camera.canvasToWorld(mousePos);
-                
+
                 // Update vertex position
                 graph.selectedVertex.pos.x = worldPos.x;
                 graph.selectedVertex.pos.y = worldPos.y;

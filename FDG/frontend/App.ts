@@ -7,7 +7,6 @@ import { RenderingUtility } from "./src/utility/RenderingUtility";
 import { NetworkUtility } from "./src/utility/NetworkUtility";
 import initWasm from "./src/utility/Forces/Rust/fdg_wasm/pkg/fdg_wasm";
 
-
 const frameQueue: Array<() => void> = [];
 
 function processFrameQueue() {
@@ -19,6 +18,9 @@ function processFrameQueue() {
 }
 processFrameQueue();
 
+/**
+ * Main application class for initializing and running the force-directed graph visualizer.
+ */
 class Application {
     private readonly canvas: HTMLCanvasElement;
     private readonly ctx: CanvasRenderingContext2D;
@@ -28,6 +30,7 @@ class Application {
     private uiController!: UIController;
     private inputManager!: InputManager;
 
+    /** Constructs the Application and initializes the canvas and components. */
     constructor() {
         this.canvas = document.getElementById("graphCanvas") as HTMLCanvasElement;
         if (!this.canvas) {
@@ -43,7 +46,8 @@ class Application {
         this.initializeComponents();
         this.startRenderLoop();
     }
-    
+
+    /** Sets up the canvas size and resize event listener. */
     private setupCanvas() {
         // Resize canvas to fit window
         CanvasUtility.resizeCanvas(this.canvas);
@@ -54,28 +58,30 @@ class Application {
         });
     }
 
+    /** Initializes core systems and UI/input managers. */
     private initializeComponents() {
         // Initialize core systems
         this.camera = new Camera();
         this.graphManager = new GraphManager(this.ctx!, this.canvas);
-        
+
         // Initialize UI and input managers
         this.uiController = new UIController(this.graphManager);
         this.inputManager = new InputManager(this.canvas, this.camera, this.graphManager, this.uiController);
     }
-    
+
+    /** Starts the main render and simulation loop. */
     private async startRenderLoop() {
         // Flushed all previous data sent by previous instances out from the server
         // To prevent old data being merged with a new server request
         await NetworkUtility.flushSever(this.graphManager);
-        
+
         const gameLoop = () => {
             // Run physics simulation
             this.graphManager.simulate();
-            
+
             // Render the graph
             RenderingUtility.render(this.ctx, this.canvas, this.camera, this.graphManager);
-            
+
             // Continue loop
             requestAnimationFrame(gameLoop);
         };
@@ -83,13 +89,14 @@ class Application {
     }
 }
 
-// Start application when page loads
+/**
+ * Entry point: initializes WASM and starts the application on window load.
+ */
 window.onload = async () => {
     await initWasm();
     try {
         new Application();
-        console.log("Application started successfully");
     } catch (error) {
-        console.error("Failed to start application:", error);
+        // Failed to start application
     }
 };

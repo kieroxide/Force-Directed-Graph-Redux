@@ -205,6 +205,7 @@ export class Graph {
     initVerticesPos(vertices = this.getVertices()) {
         const components = this.updateComponents(vertices);
         const numComponents = [...components.keys()].length;
+        
         // Gets comp origin positions to set them in a circular pattern around the center of canvas
         const comp_positions = GeometryUtility.circlePoints(
             this._canvas.width / 2,

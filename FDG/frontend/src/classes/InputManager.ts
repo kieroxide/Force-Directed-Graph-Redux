@@ -24,20 +24,21 @@ export class InputManager {
     }
 
     private setupEventListeners() {
-        this.canvas.addEventListener("contextmenu", (e) => this.handleRightClick(e)); // expand from vertex
-        this.canvas.addEventListener("mousedown", (e) => this.handleMouseDown(e)); // dragging Camera/Vertex
-        this.canvas.addEventListener("mousemove", (e) => this.handleMouseMove(e)); // ^^^^^^^^^^^^^^^^^^^^^^
-        this.canvas.addEventListener("mouseup", () => this.handleMouseUp()); // ^^^^^^^^^^^^^^^^^^^^^^
-        this.canvas.addEventListener("mouseleave", () => this.handleMouseLeave()); // ^^^^^^^^^^^^^^^^^^^^^^
-        this.canvas.addEventListener("wheel", (e) => this.handleWheel(e)); // zooming in/out
+        this.canvas.addEventListener("contextmenu", (e) => this.handleRightClick(e));   // expand from vertex
+        this.canvas.addEventListener("mousedown", (e) => this.handleMouseDown(e));      // dragging Camera/Vertex
+        this.canvas.addEventListener("mousemove", (e) => this.handleMouseMove(e));      // also dragging
+        this.canvas.addEventListener("mouseup", () => this.handleMouseUp());            // also dragging
+        this.canvas.addEventListener("mouseleave", () => this.handleMouseLeave());      // also dragging
+        this.canvas.addEventListener("wheel", (e) => this.handleWheel(e));              // zooming in/out
     }
 
-    // Handles expansion of vertices
+    // Handles right click expansion of vertex/vertices
     private async handleRightClick(e: MouseEvent) {
         e.preventDefault();
-        if (this.isExpandingVertex) return;
+        if (this.isExpandingVertex) return; // One expansion click at a time
+        
         const graph = this.graphManager.graph;
-        let vertexToExpand = graph.lastClickedVertex;
+        const vertexToExpand = graph.lastClickedVertex;
 
         if (vertexToExpand) {
             const settings = this.uiController.getSettings();
@@ -101,8 +102,10 @@ export class InputManager {
                 if (this.camera.cameraLockedVertex === graph.selectedVertex) {
                     return;
                 }
+                
                 const mousePos = CanvasUtility.browserToCanvas(this.canvas, e);
                 const worldPos = this.camera.canvasToWorld(mousePos);
+                
                 // Update vertex position
                 graph.selectedVertex.pos.x = worldPos.x;
                 graph.selectedVertex.pos.y = worldPos.y;

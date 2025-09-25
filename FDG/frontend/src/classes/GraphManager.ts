@@ -4,6 +4,7 @@ import { Vertex } from "../graph/Vertex";
 import type { Vec } from "../graph/Vec";
 import { MathUtility } from "../utility/MathUtility";
 import config from "../../../config.json";
+import { RenderingUtility } from "../utility/RenderingUtility";
 
 interface EntityData {
     label: string;
@@ -22,8 +23,11 @@ interface BackendResponse {
 }
 
 export class GraphManager {
+    private static readonly MINIMUM_ENTITY_FETCH = 2;
     private readonly _graph: Graph;
     private readonly _ctx: CanvasRenderingContext2D;
+
+    private _stopExpansion = false;
 
     constructor(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
         this._ctx = ctx;
@@ -38,6 +42,10 @@ export class GraphManager {
         return this._ctx;
     }
 
+    set stopExpansion(stop: boolean) {
+        this._stopExpansion = stop;
+    }
+
     /**
      * Loads graph data from server and updates visualization
      */
@@ -46,13 +54,19 @@ export class GraphManager {
         depth: number,
         relationLimit: number,
         append = false
-    ): Promise<Graph> {
+    ): Promise<Graph | undefined> {
         try {
             if (!entityId) {
                 return this._graph; // nothing to load
             }
 
             const backendResp: BackendResponse = await NetworkUtility.fetchGraphData(entityId, depth, relationLimit);
+
+            // Avoids data that has below minimum entities to avoid ugly graphs
+            if (Object.entries(backendResp.data.entities).length <= GraphManager.MINIMUM_ENTITY_FETCH) {
+                RenderingUtility.showError("Unable to fetch further—no additional entities found.");
+                return undefined;
+            }
             this.parseAndAddToGraph(backendResp.data, append);
             return this._graph;
         } catch (error) {
@@ -95,6 +109,7 @@ export class GraphManager {
                     const sourceVertex = this._graph.vertices[sourceId];
                     const targetVertex = this._graph.vertices[targetId];
                     if (!sourceVertex || !targetVertex) continue;
+
                     this._graph.addEdge(sourceId, targetId, propertyLabel);
                 }
             }
@@ -102,12 +117,15 @@ export class GraphManager {
 
         // Positioning
         if (append) {
+            // Dirty build of all new vertices
             const newVertices: Record<string, Vertex> = {};
             for (const id of Object.keys(this._graph.vertices)) {
                 if (!preExistingIds.has(id)) {
                     newVertices[id] = this._graph.vertices[id];
                 }
             }
+
+            // Append only new vertices to not reset position of already existing vertices
             if (Object.keys(newVertices).length > 0) {
                 this._graph.appendVerticesPos(newVertices, midpoint);
             }
@@ -122,16 +140,23 @@ export class GraphManager {
      * Expands all vertices in depth frontier up to relationGoal
      */
     async expandVertex(vertexToExpand: Vertex, graphManager: GraphManager, depth: number, relationGoal: number) {
+        // Reset stop expansion to false if previous expansion was stopped
+        this._stopExpansion = false;
+
         let expandedVertices = new Set<Vertex>();
+        // Iterates through to maxDepth, expanding each layer of the depth search
         for (let currentDepth = 1; currentDepth < depth + 1; currentDepth++) {
             const depthSet = MathUtility.depthSearch(vertexToExpand, currentDepth);
-            const currentFrontier = MathUtility.difference(depthSet, expandedVertices);
+            const currentFrontier = MathUtility.difference(depthSet, expandedVertices); // Vertices to expand
 
+            // Loop through all vertices and expand them
             for (const vertex of currentFrontier) {
-                vertex.expanding = true;
-                await graphManager.expandTillLimit(vertex, relationGoal);
-                vertex.expanding = false;
-                expandedVertices.add(vertex);
+                if (!this._stopExpansion) {
+                    vertex.expanding = true;
+                    await graphManager.expandTillLimit(vertex, relationGoal);
+                    vertex.expanding = false;
+                    expandedVertices.add(vertex);
+                }
             }
         }
     }
@@ -142,9 +167,12 @@ export class GraphManager {
     private async appendVertexExpansion(vertexId: string, depth: number, relationLimit: number = 5): Promise<Graph> {
         try {
             const backendResp: BackendResponse = await NetworkUtility.fetchGraphData(vertexId, depth, relationLimit);
+
             const append = true;
             const vertex = this._graph.getVertex(vertexId);
-            this.parseAndAddToGraph(backendResp.data, append, vertex.pos);
+            if(vertex){
+                this.parseAndAddToGraph(backendResp.data, append, vertex.pos);
+            }
             return this._graph;
         } catch (error) {
             console.error("Error expanding graph:", error);
@@ -157,14 +185,18 @@ export class GraphManager {
      */
     private async expandTillLimit(vertex: Vertex, entityGoal: number) {
         const MAXIMUM_ATTEMPTS = config.MAXIMUM_ATTEMPTS;
+
         let attempts = 0;
         let expandedRelationCount = 0;
+        // Due to my backend filtering, returned nodes can be much less than asked for
+        // So this loops attempts calling the backend for increasing relationLimits
         while (vertex.connectedEdges.length < entityGoal) {
             expandedRelationCount++;
             let numBeforeExpansion = vertex.connectedEdges.length;
 
             const depth = 1;
             await this.appendVertexExpansion(vertex.id, depth, entityGoal + expandedRelationCount);
+
             if (numBeforeExpansion === vertex.connectedEdges.length) {
                 attempts += 1;
             }

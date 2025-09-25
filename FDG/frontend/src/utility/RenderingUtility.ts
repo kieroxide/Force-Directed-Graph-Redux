@@ -6,6 +6,7 @@ export class RenderingUtility {
     private static readonly BACKGROUND_COLOR = "#faf8f8ff ";
     static _paperPattern: CanvasPattern | null = null;
 
+    /** Renders the graph and background to the canvas. */
     static render(
         ctx: CanvasRenderingContext2D,
         canvas: HTMLCanvasElement,
@@ -27,6 +28,36 @@ export class RenderingUtility {
         camera.applyTransform(ctx, canvas);
         graphManager.graph.draw();
         ctx.restore();
+    }
+
+    /**
+     * Shows success message to user
+     */
+    static showSuccess(message: string) {
+        this.showMessage(message, "success");
+    }
+
+    /**
+     * Shows error message to user
+     */
+    static showError(message: string) {
+        this.showMessage(message, "error");
+    }
+
+    /** Shows a message to the user with a given type. */
+    static showMessage(message: string, type: "success" | "error") {
+        const bar = document.getElementById("popup-message");
+        if (!bar) return;
+
+        bar.textContent = message;
+        bar.style.display = "block";
+        bar.style.background = type === "success" ? "#4caf50" : "#f44336";
+        bar.style.color = "#fff";
+
+        // Auto-hide after 3 seconds
+        setTimeout(() => {
+            bar.style.display = "none";
+        }, 3000);
     }
 
     /**

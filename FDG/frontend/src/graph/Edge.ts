@@ -14,9 +14,10 @@ export class Edge {
     private static readonly BIDIRECTIONAL_OFFSET_SCALE = 20;
 
     private static readonly LABEL_DISTANCE_FROM_MIDPOINT = 20;
-    private static readonly LABEL_PADDING = 40;
+    private static readonly LABEL_PADDING = 80;
     private static readonly LABEL_MAX_FONT = 40;
     private static readonly LABEL_MIN_FONT = 12;
+    private static readonly LABEL_COVERAGE_FACTOR = 0.65;
 
     private static readonly LABEL_COLOUR = "#2e2e2eff";
 
@@ -86,19 +87,19 @@ export class Edge {
         const sourceIntersect = GeometryUtility.getBoxIntersect(target, this.sourceRef);
         const targetIntersect = GeometryUtility.getBoxIntersect(source, this.targetRef);
 
-        // Builds the label as multiple properties can be assigned to an edge
+        // Builds the label to be the longest property string
         let typeLabel = "";
         for (let i = 0; i < this._types.length; i++) {
-            typeLabel += this._types[i];
-            if (i != this._types.length - 1) {
-                typeLabel += ", ";
+            const type = this._types[i];
+            if (type.length > typeLabel.length) {
+                typeLabel = type;
             }
         }
 
         // Calculates the best font size for the edge based of vertex distance
         const padding = Edge.LABEL_PADDING;
         const distanceInbetween = GeometryUtility.distance(sourceIntersect, targetIntersect) - padding;
-        const maxLabelWidth = distanceInbetween * 0.7;
+        const maxLabelWidth = distanceInbetween * Edge.LABEL_COVERAGE_FACTOR;
         if (maxLabelWidth <= 0) return;
 
         const maxFont = Edge.LABEL_MAX_FONT;

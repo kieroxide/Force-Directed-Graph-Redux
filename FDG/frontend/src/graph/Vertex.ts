@@ -83,7 +83,10 @@ export class Vertex {
         if (imgURL != "") {
             const img = new Image();
             img.src = imgURL;
+
+            // Create a thumbnail of the image to reduce memory/performance hits
             img.onload = () => {
+                // FrameQueue will create a thumbnail one at a time
                 FrameQueue.push(() => {
                     const size = THUMBNAIL_SIZE;
                     const canvas = document.createElement("canvas");

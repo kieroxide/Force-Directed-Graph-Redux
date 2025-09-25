@@ -2,9 +2,13 @@ import { Vertex } from "../../graph/Vertex";
 import { VertexUtility } from "../VertexUtility";
 import { repulsion } from "../Forces/Rust/fdg_wasm/pkg/fdg_wasm";
 
+/**
+ * Static class for applying repulsion forces to vertices.
+ */
 export class Repulsion {
-    private static readonly STRENGTH = 800;
+    private static readonly STRENGTH = 1000;
 
+    /** Applies repulsive forces between all pairs of vertices using the WASM-accelerated function. */
     static repulsion(vertices: Array<Vertex>, strength: number = Repulsion.STRENGTH, exponent: number = 1) {
         for (let i = 0; i < vertices.length; i++) {
             for (let j = i + 1; j < vertices.length; j++) {
@@ -30,7 +34,7 @@ export class Repulsion {
 
                 // result is a JS array: [force1x, force1y, force2x, force2y]
                 const [force1x, force1y, force2x, force2y] = result;
-                
+
                 // Apply the returned forces
                 vertexA.velocity.x += force1x;
                 vertexA.velocity.y += force1y;

@@ -9,6 +9,7 @@ export class NetworkUtility {
             ? "http://localhost:5000/api"
             : "https://wikidatatoentitygraph-production.up.railway.app/api");
 
+    /** Fetches the QID for a Wikidata entity by its name. */
     static async fetchQIDByName(searchInput: string) {
         const url = `https://www.wikidata.org/w/api.php?action=wbsearchentities&search=${encodeURIComponent(
             searchInput
@@ -21,6 +22,7 @@ export class NetworkUtility {
         }
         return null;
     }
+
     /**
      * Fetches graph data from the server for a given entity
      * Returns the newly fetched entities and relations directly from the API
@@ -42,6 +44,7 @@ export class NetworkUtility {
             throw error;
         }
     }
+
     /**
      * A quick and dirty method to fix the error with old requests from previous instances
      * corrupting a new instances request.

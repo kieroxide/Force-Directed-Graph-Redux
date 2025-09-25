@@ -1,6 +1,7 @@
 import { GraphManager } from "./GraphManager";
 import { MathUtility } from "../utility/MathUtility";
 import { NetworkUtility } from "../utility/NetworkUtility";
+import { RenderingUtility } from "../utility/RenderingUtility";
 
 export class UIController {
     private readonly _graphManager: GraphManager;
@@ -14,6 +15,7 @@ export class UIController {
 
     private _elements: {
         fetchButton?: HTMLButtonElement;
+        stopExpansionButton?: HTMLButtonElement;
         clearButton?: HTMLButtonElement;
         wikiInput?: HTMLInputElement;
         suggestionsDiv?: HTMLDivElement;
@@ -41,6 +43,7 @@ export class UIController {
     private getElements() {
         return {
             fetchButton: document.getElementById("fetch-graph") as HTMLButtonElement,
+            stopExpansionButton: document.getElementById("stop-expansions") as HTMLButtonElement,
             clearButton: document.getElementById("clear-graph") as HTMLButtonElement,
             wikiInput: document.getElementById("wiki-input") as HTMLInputElement,
             suggestionsDiv: document.getElementById("suggestions") as HTMLDivElement,
@@ -59,8 +62,15 @@ export class UIController {
     private setupEventListeners() {
         // Fetch graph button
         this._elements.fetchButton?.addEventListener("click", () => this.handleFetchGraph());
+
+        // Search functionality
         this._elements.wikiInput?.addEventListener("input", () => this.handleInputSuggestions());
         this._elements.wikiInput?.addEventListener("keydown", (e) => this.handleSuggestionKeydown(e));
+        this._elements.suggestionsDiv?.addEventListener("mousedown", (e) => this.handleSuggestionClick(e));
+
+        // Kill Expansions
+        this._elements.stopExpansionButton?.addEventListener("click", () => this.handleStopExpansionsClick());
+
         // Clear graph button
         this._elements.clearButton?.addEventListener("click", () => this.handleClearGraph());
 
@@ -69,10 +79,14 @@ export class UIController {
 
         // Entity limit slider
         this._elements.relationLimit?.addEventListener("input", () => this.updateEntityLimitDisplay());
-
-        this._elements.suggestionsDiv?.addEventListener("mousedown", (e) => this.handleSuggestionClick(e));
     }
 
+    /** Allows aborting a current expansion */
+    private handleStopExpansionsClick() {
+        this._graphManager.stopExpansion = true;
+    }
+
+    /** Allows clicking and fetching graph data on a suggestion */
     private handleSuggestionClick(e: MouseEvent) {
         const target = e.target as HTMLElement;
         const div = target.closest("div[data-index]");
@@ -182,26 +196,38 @@ export class UIController {
             this.setLoadingState(true);
 
             const settings = this.getSettings();
-            let entityId = this._elements.wikiInput?.value.trim().toUpperCase() || "Q1"; // defualt to universe
+            let entityId = this._elements.wikiInput?.value.trim().toUpperCase() || "Q1"; // default to universe
+
+            // Test to ensure entityID is in QID format
             if (!/^Q\d+$/.test(entityId)) {
                 const qid = await NetworkUtility.fetchQIDByName(entityId);
                 if (qid) {
                     entityId = qid;
                 } else {
-                    this.showError("No Wikidata entity found for that name.");
+                    RenderingUtility.showError("No Wikidata entity found for that name.");
                     return;
                 }
             }
+
             const appendMode = settings.appendMode && !this._graphManager.isEmpty(); // loads if empty
-            await this._graphManager.fetchRelations(entityId, settings.depth, settings.relationLimit, appendMode);
+            const response = await this._graphManager.fetchRelations(
+                entityId,
+                settings.depth,
+                settings.relationLimit,
+                appendMode
+            );
+
             if (appendMode) {
                 // When appending graph may be disconnected and BFS origins need to be redefined
                 this._graphManager.graph.updateComponents();
             }
-            this.showSuccess(`Graph loaded for: ${entityId}`);
+
+            if (response) {
+                RenderingUtility.showSuccess(`Graph loaded for: ${entityId}`);
+            }
         } catch (error) {
             console.error("Error fetching graph:", error);
-            this.showError("Failed to fetch graph data");
+            RenderingUtility.showError("Failed to fetch graph data");
         } finally {
             this.setLoadingState(false);
         }
@@ -212,7 +238,8 @@ export class UIController {
      */
     private handleClearGraph() {
         this._graphManager.clearGraph();
-        this.showSuccess("Graph cleared");
+        this._graphManager.stopExpansion = true;
+        RenderingUtility.showSuccess("Graph cleared");
     }
 
     /**
@@ -259,20 +286,6 @@ export class UIController {
             const numOfEdges = this._graphManager.getEdges().length;
             this._elements.graphStats.textContent = `Vertices: ${numOfVertices} | Edges: ${numOfEdges}`;
         }
-    }
-
-    /**
-     * Shows success message to user
-     */
-    private showSuccess(message: string) {
-        console.log(`✅ ${message}`);
-    }
-
-    /**
-     * Shows error message to user
-     */
-    private showError(message: string) {
-        console.error(`❌ ${message}`);
     }
 
     /**

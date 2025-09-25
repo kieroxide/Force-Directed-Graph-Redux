@@ -7,9 +7,9 @@ import { VertexUtility } from "../VertexUtility";
  * Static class for applying attraction forces to vertices.
  */
 export class Attraction {
-    private static readonly SPRING = 0.06;
+    private static readonly SPRING = 0.05;
     private static readonly CENTRAL_SPRING = 0.05;
-    private static readonly REST_LENGTH = 30;
+    private static readonly REST_LENGTH = 100;
 
     /** Applies a centering force to all origin vertices, pulling them toward the canvas center. */
     static centerAttraction(origins: Set<Vertex>, canvas: HTMLCanvasElement) {

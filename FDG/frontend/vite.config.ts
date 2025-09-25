@@ -1,7 +1,7 @@
 import { defineConfig } from "vite";
 
 export default defineConfig({
-    base: "/Force-Directed-Graph-Redux/",
+    base: "/Wikidata-Entity-Graph-Visualiser/",
     server: {
         proxy: {
             "/api": "http://localhost:5000",

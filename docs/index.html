@@ -5,10 +5,11 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet" />
         <title>Force-Directed Graph Visualizer</title>
-      <script type="module" crossorigin src="/Force-Directed-Graph-Redux/assets/index-tQaLjV8c.js"></script>
-      <link rel="stylesheet" crossorigin href="/Force-Directed-Graph-Redux/assets/index-Djj8o89M.css">
+      <script type="module" crossorigin src="/Wikidata-Entity-Graph-Visualiser/assets/index-ME3ziML9.js"></script>
+      <link rel="stylesheet" crossorigin href="/Wikidata-Entity-Graph-Visualiser/assets/index-BNPp1Hst.css">
     </head>
     <body>
+        <div id="popup-message"></div>
         <div id="loading-spinner" style="display: none">
             <div class="spinner"></div>
         </div>
@@ -47,6 +48,7 @@
 
                 <div class="control-group">
                     <h3>Actions</h3>
+                    <button id="stop-expansions">Stop Expansions</button>
                     <button id="clear-graph">Clear Graph</button>
                     <div class="stats" id="graph-stats">Vertices: 0 | Edges: 0</div>
                 </div>
@@ -57,6 +59,7 @@
                         <li>Drag canvas to pan</li>
                         <li>Scroll to zoom</li>
                         <li>Drag vertices to move</li>
+                        <li>Ctrl-Click vertex to visit its Wikipedia Page</li>
                         <li>Right-click vertex to expand</li>
                     </ul>
                 </div>

@@ -5,18 +5,22 @@ export class MathUtility {
     /**
      * Clamps a value between a minimum and maximum
      */
+    /** Clamps a value between a minimum and maximum. */
     static clamp(value: number, min: number, max: number) {
         return Math.max(min, Math.min(value, max));
     }
 
+    /** Returns the symmetric difference between two sets. */
     static symmetricDifference<T>(setA: Set<T>, setB: Set<T>) {
         return new Set([...[...setA].filter((x) => !setB.has(x)), ...[...setB].filter((x) => !setA.has(x))]);
     }
 
+    /** Returns the difference between two sets. */
     static difference<T>(setA: Set<T>, setB: Set<T>): Set<T> {
         return new Set([...setA].filter((x) => !setB.has(x)));
     }
 
+    /** Performs a depth-limited search from a vertex, returning all visited vertices. */
     static depthSearch(vertex: Vertex, limit: number, depth: number = 0, visited: Set<Vertex> = new Set()) {
         if (limit <= depth) return visited;
         visited.add(vertex);
@@ -32,6 +36,9 @@ export class MathUtility {
 
     /**
      * Groups vertices into connected components using BFS, organized by distance from origin
+     */
+    /**
+     * Groups vertices into connected components using BFS, organized by distance from origin.
      */
     static bfsComponents(vertices: Vertex[]): Map<number, Map<number, Vertex[]>> {
         const visited = new Set<Vertex>();
